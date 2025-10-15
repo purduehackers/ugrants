@@ -1,0 +1,26 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { Image } from "astro:assets";
+import s from "@assets/images/sign.jpg";
+import OptionalLink from "./OptionalLink.astro";
+import Link from "./Link.astro";
+
+interface Props {
+    project: CollectionEntry<"projects">;
+}
+
+const {
+    project: { data },
+} = Astro.props;
+---
+
+<div class="p-2 m-4 lg:m-8 bg-black">
+    <h4 class="text-lg">
+        <OptionalLink href={data.urls.project}>{data.name}</OptionalLink>
+    </h4>
+    <h5><Link href={data.urls.author}>{data.author}</Link></h5>
+
+    <div class="grayscale pt-3">
+        <Image src={s} alt={data.name} />
+    </div>
+</div>

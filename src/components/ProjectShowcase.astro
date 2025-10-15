@@ -1,0 +1,11 @@
+---
+import { getCollection } from "astro:content";
+const entries = await getCollection("projects");
+import Project from "@components/Project.astro";
+---
+
+<div class="bg-gray-200 text-black overflow-scroll lg:w-lg">
+    <h2 class="m-4 text-lg lg:m-8">recently funded projects</h2>
+    <hr class="my-5 h-1 bg-black lg:my-10" />
+    {entries.map((project) => <Project project={project} />)}
+</div>

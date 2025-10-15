@@ -1,0 +1,15 @@
+---
+import Sign from "@components/Sign.svelte";
+interface Props {
+    hideSmall: bool;
+}
+
+const { hideSmall } = Astro.props;
+const clss = hideSmall ? "hidden lg:block" : "block lg:hidden";
+---
+
+<div class="overflow-clip">
+    <div class=`translate-y-20 ${clss}`>
+        <Sign client:load />
+    </div>
+</div>

@@ -3,10 +3,8 @@
     import { onMount } from "svelte";
 
     let bottomLeft: SVGRectElement;
-    let top: SVGRectElement;
     let center: SVGRectElement;
     let right: SVGRectElement;
-    let bottomRight: SVGRectElement;
 
     onMount(() => {
         setInterval(() => {
@@ -16,13 +14,9 @@
 
             bottomLeft.setAttribute("style", `fill:${colors.boltColor}`);
 
-            for (let elem of [top, center]) {
-                elem.setAttribute("style", `fill:${colors.zapColor}`);
-            }
+            center.setAttribute("style", `fill:${colors.zapColor}`);
 
-            for (let elem of [right, bottomRight]) {
-                elem.setAttribute("style", `fill:${colors.sparkColor}`);
-            }
+            right.setAttribute("style", `fill:${colors.sparkColor}`);
         }, 10);
     });
 </script>
@@ -33,9 +27,7 @@
     xmlns="http://www.w3.org/2000/svg"
 >
     <!-- AI Generated -->
-    <rect x="100" y="0" width="100" height="100" bind:this={top} />
-    <rect x="100" y="100" width="100" height="100" bind:this={center} />
-    <rect x="200" y="100" width="100" height="100" bind:this={right} />
+    <rect x="100" y="0" width="100" height="200" bind:this={center} />
+    <rect x="200" y="100" width="100" height="200" bind:this={right} />
     <rect x="0" y="200" width="100" height="100" bind:this={bottomLeft} />
-    <rect x="200" y="200" width="100" height="100" bind:this={bottomRight} />
 </svg>

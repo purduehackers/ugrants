@@ -1,16 +1,17 @@
 ---
 import type { CollectionEntry } from "astro:content";
 import { Image } from "astro:assets";
-import s from "@assets/images/sign.jpg";
 import OptionalLink from "./OptionalLink.astro";
 import Link from "./Link.astro";
 
 interface Props {
     project: CollectionEntry<"projects">;
+    img: any;
 }
 
 const {
     project: { data },
+    img,
 } = Astro.props;
 ---
 
@@ -21,6 +22,6 @@ const {
     <h5><Link href={data.urls.author}>{data.author}</Link></h5>
 
     <div class="grayscale pt-3">
-        <Image src={s} alt={data.name} />
+        <Image width={500} src={img} alt={data.name} />
     </div>
 </div>

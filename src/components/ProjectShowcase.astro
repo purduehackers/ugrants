@@ -2,10 +2,24 @@
 import { getCollection } from "astro:content";
 const entries = await getCollection("projects");
 import Project from "@components/Project.astro";
+import type { CollectionEntry } from "astro:content";
+
+const images = import.meta.glob("@assets/images/*.{png,jpg,jpeg,gif,svg}");
+async function imageFromEntry(e: CollectionEntry<"projects">) {
+    for (const [k, v] of Object.entries(images)) {
+        if (k.endsWith(e.data.image)) {
+            return await v();
+        }
+    }
+}
 ---
 
 <div class="bg-gray-200 text-black overflow-scroll lg:w-lg">
     <h2 class="m-4 text-lg lg:m-8">recently funded projects</h2>
     <hr class="my-5 h-1 bg-black lg:my-10" />
-    {entries.map((project) => <Project project={project} />)}
+    {
+        entries.map((project) => (
+            <Project project={project} img={imageFromEntry(project)} />
+        ))
+    }
 </div>

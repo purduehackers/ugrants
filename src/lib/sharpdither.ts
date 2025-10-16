@@ -159,7 +159,7 @@ const sharpService: LocalImageService<SharpImageServiceConfig> = {
       0,
     );
 
-    const q = new RgbQuant({ colors: 16 });
+    const q = new RgbQuant({ colors: 16, dithKern: "FalseFloydSteinberg" });
     q.sample(cv, info.width);
     q.palette();
     const dithered = q.reduce(cv);

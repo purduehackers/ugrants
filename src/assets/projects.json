@@ -10,43 +10,13 @@
     }
   },
   {
-    "id": "sign2",
-    "image": "sign.jpg",
-    "name": "The Sign",
-    "author": "Jack Hogan",
+    "id": "qter",
+    "image": "qter.png",
+    "name": "Qter",
+    "author": "Arhan Chaudhary & Henry Rovnyak",
     "urls": {
-      "author": "https://jackhogan.me",
-      "project": "https://blog.purduehackers.com/posts/sign"
-    }
-  },
-  {
-    "id": "sign3",
-    "image": "sign.jpg",
-    "name": "The Sign",
-    "author": "Jack Hogan",
-    "urls": {
-      "author": "https://jackhogan.me",
-      "project": "https://blog.purduehackers.com/posts/sign"
-    }
-  },
-  {
-    "id": "sign4",
-    "image": "sign.jpg",
-    "name": "The Sign",
-    "author": "Jack Hogan",
-    "urls": {
-      "author": "https://jackhogan.me",
-      "project": "https://blog.purduehackers.com/posts/sign"
-    }
-  },
-  {
-    "id": "sign5",
-    "image": "sign.jpg",
-    "name": "The Sign",
-    "author": "Jack Hogan",
-    "urls": {
-      "author": "https://jackhogan.me",
-      "project": "https://blog.purduehackers.com/posts/sign"
+      "author": "https://arhan.sh",
+      "project": "https://qter.dev"
     }
   }
 ]

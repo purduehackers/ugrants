@@ -18,6 +18,12 @@ export default defineConfig({
 
   vite: {
     plugins: [tailwindcss()],
+    optimizeDeps: {
+      exclude: ["canvas"],
+    },
+    ssr: {
+      external: ["canvas"],
+    },
   },
 
   integrations: [svelte()],

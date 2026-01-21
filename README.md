@@ -1,43 +1,40 @@
-# Astro Starter Kit: Minimal
+# ugrants
 
-```sh
-pnpm create astro@latest -- --template minimal
+Micro grants by [Purdue Hackers](https://purduehackers.com) to fund ambitious student projects and artworks.
+
+## Tech Stack
+
+- [Astro](https://astro.build) - Static site generator
+- [Svelte](https://svelte.dev) - Interactive components
+- [Tailwind CSS](https://tailwindcss.com) - Styling
+- [Sharp](https://sharp.pixelplumbing.com) - Image processing with custom dithering
+
+## Development
+
+```bash
+pnpm install
+pnpm dev
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## Build
 
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
+```bash
+pnpm build
+pnpm preview
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## Deployment
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+The project uses a Node.js adapter for server-side rendering in production. A Dockerfile is included for containerized deployments.
 
-Any static assets, like images, can be placed in the `public/` directory.
+## Project Structure
 
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `pnpm install`             | Installs dependencies                            |
-| `pnpm dev`             | Starts local dev server at `localhost:4321`      |
-| `pnpm build`           | Build your production site to `./dist/`          |
-| `pnpm preview`         | Preview your build locally, before deploying     |
-| `pnpm astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `pnpm astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+```
+src/
+├── assets/         # Images and project data
+├── components/     # Astro and Svelte components
+├── layouts/        # Page layouts
+├── lib/            # Utilities (custom Sharp image service)
+├── pages/          # Route pages
+└── styles/         # Global CSS
+```

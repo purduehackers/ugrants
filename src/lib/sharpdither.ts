@@ -11,7 +11,6 @@ import type {
 import type { FitEnum, FormatEnum, SharpOptions } from "sharp";
 //@ts-expect-error
 import RgbQuant from "rgbquant";
-import { createCanvas, createImageData } from "canvas";
 
 export interface SharpImageServiceConfig {
   /**
@@ -151,24 +150,20 @@ const sharpService: LocalImageService<SharpImageServiceConfig> = {
       };
     }
 
-    const cv = createCanvas(info.width, info.height);
-    const ctx = cv.getContext("2d");
-    ctx.putImageData(
-      createImageData(new Uint8ClampedArray(dataCopy), info.width, info.height),
-      0,
-      0,
-    );
-
     const q = new RgbQuant({ colors: 12, dithKern: "FalseFloydSteinberg" });
-    q.sample(cv, info.width);
+    q.sample(dataCopy, info.width);
     q.palette();
-    const dithered = q.reduce(cv);
-    ctx.putImageData(
-      createImageData(new Uint8ClampedArray(dithered), info.width),
-      0,
-      0,
-    );
-    const buffer = cv.toBuffer("image/png");
+    const dithered = q.reduce(dataCopy);
+
+    const buffer = await sharp(Buffer.from(dithered), {
+      raw: {
+        width: info.width,
+        height: info.height,
+        channels: 4,
+      },
+    })
+      .png()
+      .toBuffer();
 
     return {
       data: buffer,

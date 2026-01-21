@@ -5,9 +5,7 @@ import tailwindcss from "@tailwindcss/vite";
 
 import svelte from "@astrojs/svelte";
 
-import node from "@astrojs/node";
-
-const isDev = process.argv.includes("dev");
+import vercel from "@astrojs/vercel";
 
 // https://astro.build/config
 export default defineConfig({
@@ -19,19 +17,9 @@ export default defineConfig({
 
   vite: {
     plugins: [tailwindcss()],
-    optimizeDeps: {
-      exclude: ["canvas"],
-    },
-    ssr: {
-      external: ["canvas"],
-    },
   },
 
   integrations: [svelte()],
 
-  adapter: isDev
-    ? undefined
-    : node({
-        mode: "standalone",
-      }),
+  adapter: vercel(),
 });

@@ -11,12 +11,44 @@
   },
   {
     "id": "qter",
-    "image": "qter.jpg",
+    "image": "qter.webp",
     "name": "Qter",
     "author": "Arhan Chaudhary & Henry Rovnyak",
     "urls": {
       "author": "https://arhan.sh",
       "project": "https://qter.dev"
     }
+  },
+  {
+    "id": "beacons",
+    "image": "beacon.webp",
+    "name": "Beacons",
+    "author": "Jack Hogan",
+    "urls": {
+      "author": "https://jackhogan.me"
+    }
+  },
+  {
+    "id": "2048",
+    "image": "2048.webp",
+    "name": "2048 AI",
+    "author": "Angela Qian",
+    "urls": {
+      "author": "https://angelazqian.github.io/"
+    }
+  },
+  {
+    "id": "poas",
+    "image": "poas.webp",
+    "name": "Portraits of a Star",
+    "author": "Jonathan Wang",
+    "urls": {}
+  },
+  {
+    "id": "wwlb",
+    "image": "wwlb.webp",
+    "name": "What Was Left Behind",
+    "author": "Keith",
+    "urls": {}
   }
 ]

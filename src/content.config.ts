@@ -10,7 +10,7 @@ const projects = defineCollection({
     author: z.string(),
     urls: z.object({
       project: z.string().url().optional(),
-      author: z.string().url(),
+      author: z.string().url().optional(),
     }),
   }),
 });

@@ -1,32 +1,19 @@
 [
   {
-    "id": "sign",
-    "image": "sign.jpg",
-    "name": "The Sign",
-    "author": "Jack Hogan",
-    "urls": {
-      "author": "https://jackhogan.me",
-      "project": "https://blog.purduehackers.com/posts/sign"
-    }
+    "id": "wwlb",
+    "image": "wwlb.webp",
+    "name": "What Was Left Behind",
+    "author": "Keith",
+    "urls": {},
+    "description": "An experimental art installation featuring dressed mannequins, the liminal veil, and a story told without words for those who look deeper."
   },
   {
-    "id": "qter",
-    "image": "qter.webp",
-    "name": "Qter",
-    "author": "Arhan Chaudhary & Henry Rovnyak",
-    "urls": {
-      "author": "https://arhan.sh",
-      "project": "https://qter.dev"
-    }
-  },
-  {
-    "id": "beacons",
-    "image": "beacon.webp",
-    "name": "Beacons",
-    "author": "Jack Hogan",
-    "urls": {
-      "author": "https://jackhogan.me"
-    }
+    "id": "poas",
+    "image": "poas.webp",
+    "name": "Portraits of a Star",
+    "author": "Jonathan Wang",
+    "urls": {},
+    "description": "A grid of paintings featuring original character Asteryski, with a four-pointed star forming across the paintings."
   },
   {
     "id": "2048",
@@ -35,20 +22,39 @@
     "author": "Angela Qian",
     "urls": {
       "author": "https://angelazqian.github.io/"
-    }
+    },
+    "description": "An AI trained to play 2048 off of hours of Angela's own gameplay, with a joystick to disrupt the model's game."
   },
   {
-    "id": "poas",
-    "image": "poas.webp",
-    "name": "Portraits of a Star",
-    "author": "Jonathan Wang",
-    "urls": {}
+    "id": "beacons",
+    "image": "beacon.webp",
+    "name": "Beacons",
+    "author": "Jack Hogan",
+    "urls": {
+      "author": "https://jackhogan.me"
+    },
+    "description": "Social devices to make warm introductions and bring the party to you."
   },
   {
-    "id": "wwlb",
-    "image": "wwlb.webp",
-    "name": "What Was Left Behind",
-    "author": "Keith",
-    "urls": {}
+    "id": "qter",
+    "image": "qter.webp",
+    "name": "Qter Robot",
+    "author": "Arhan Chaudhary & Henry Rovnyak",
+    "urls": {
+      "author": "https://arhan.sh",
+      "project": "https://qter.dev"
+    },
+    "description": "A computer architecture that allows humans to perform computations by manipulating the Rubik's Cube by hand with a robot to do the hard work for you."
+  },
+  {
+    "id": "sign",
+    "image": "sign.jpg",
+    "name": "The Sign",
+    "author": "Jack Hogan",
+    "urls": {
+      "author": "https://jackhogan.me",
+      "project": "https://blog.purduehackers.com/posts/sign"
+    },
+    "description": "A meter-tall Conway glider that lights up according to a color representation of the current time."
   }
 ]

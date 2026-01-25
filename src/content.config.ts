@@ -12,6 +12,7 @@ const projects = defineCollection({
       project: z.string().url().optional(),
       author: z.string().url().optional(),
     }),
+    description: z.string(),
   }),
 });
 

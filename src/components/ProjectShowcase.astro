@@ -28,9 +28,11 @@ const entriesWithImages = await Promise.all(
 );
 ---
 
-<div class="bg-gray-200 text-black overflow-scroll lg:w-lg">
-    <h2 class="m-4 text-lg lg:m-8">recently funded projects</h2>
-    <hr class="my-5 h-1 bg-black lg:my-10" />
+<div class="bg-gray-200 text-black overflow-y-auto overflow-x-hidden lg:w-lg">
+    <div class="sticky top-0 bg-gray-200 z-10 pt-4 lg:pt-8">
+        <h2 class="mx-4 text-lg lg:mx-8">recently funded projects</h2>
+        <hr class="my-5 h-1 bg-black lg:my-10" />
+    </div>
     {
         entriesWithImages.map(({ project, img }) => (
             <Project project={project} img={img} />

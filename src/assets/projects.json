@@ -23,7 +23,7 @@
     "urls": {
       "author": "https://angelazqian.github.io/"
     },
-    "description": "An AI trained to play 2048 off of hours of Angela's own gameplay, with a joystick to disrupt the model's game."
+    "description": "A neural network trained off human games to play 2048. It was displayed as a retro-style interactive exhibit using a CRT monitor and an old school joystick, where visitors could actively \"sabotage\" the game and watch the bot attempt to recover."
   },
   {
     "id": "beacons",

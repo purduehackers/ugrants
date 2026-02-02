@@ -1,5 +1,15 @@
 [
   {
+    "id": "chair",
+    "image": "chair.png",
+    "name": "Game Controller Chair",
+    "author": "Alexander Kutulas",
+    "urls": {
+        "author": "https://xanmankey.itch.io"
+    },
+    "description": "A chair - that is also a game controller! Built from Scratch at the Bechtel Innovation Design Center - we promise it won't kill you!"
+  },
+  {
     "id": "wwlb",
     "image": "wwlb.webp",
     "name": "What Was Left Behind",

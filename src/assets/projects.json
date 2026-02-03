@@ -3,9 +3,9 @@
     "id": "chair",
     "image": "chair.png",
     "name": "Game Controller Chair",
-    "author": "Alexander Kutulas",
+    "author": "Alexander Kutulas & Benjamin Taylor",
     "urls": {
-        "author": "https://xanmankey.itch.io"
+      "author": "https://xanmankey.itch.io"
     },
     "description": "A chair - that is also a game controller! Built from Scratch at the Bechtel Innovation Design Center - we promise it won't kill you!"
   },

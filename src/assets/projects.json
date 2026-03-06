@@ -1,5 +1,13 @@
 [
   {
+    "id": "notebooks",
+    "image": "notebooks.png",
+    "name": "Mini Notebooks",
+    "author": "Alex Kilmer",
+    "urls": {},
+    "description": "Small notebooks with custom-patterned pages for many different uses."
+  },
+  {
     "id": "chair",
     "image": "chair.png",
     "name": "Game Controller Chair",

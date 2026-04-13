@@ -13,6 +13,11 @@ export default defineConfig({
     service: {
       entrypoint: "@lib/sharpdither.ts",
     },
+    remotePatterns: [
+      {
+        protocol: "https",
+      },
+    ],
   },
 
   vite: {

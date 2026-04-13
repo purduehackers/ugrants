@@ -1,13 +1,18 @@
 ---
 import type { CollectionEntry } from "astro:content";
+import type { ImageMetadata } from "astro";
 import { Image } from "astro:assets";
 import OptionalLink from "./OptionalLink.astro";
 
 interface Props {
     project: CollectionEntry<"projects">;
+    img: ImageMetadata | undefined;
 }
 
-const { project: { data } } = Astro.props;
+const {
+    project: { data },
+    img,
+} = Astro.props;
 ---
 
 <div class="p-2 m-4 lg:m-8 bg-black text-white">
@@ -18,9 +23,11 @@ const { project: { data } } = Astro.props;
 
     <p class="py-1">{data.description}</p>
 
-    {data.imageUrl && (
-        <div class="grayscale pt-3">
+    <div class="grayscale pt-3">
+        {img ? (
+            <Image width={500} src={img} alt={data.name} />
+        ) : data.imageUrl ? (
             <Image width={500} height={500} src={data.imageUrl} alt={data.name} />
-        </div>
-    )}
+        ) : null}
+    </div>
 </div>

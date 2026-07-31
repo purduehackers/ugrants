@@ -212,7 +212,7 @@ const sharpService: LocalImageService<SharpImageServiceConfig> = {
     })
       // Two-colour palette: the output is literally 1-bit, so this keeps the
       // files tiny and stops any encoder-side smoothing.
-      .png({ palette: true, colours: 2, effort: 10 })
+      .png({ palette: true, colours: 2 })
       .toBuffer();
 
     return {

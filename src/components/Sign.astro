@@ -71,16 +71,32 @@
         );
     }
 
+    // Only 16 values per channel exist, so every result is a repeat.
+    const cache = new Map<string, string>();
+    const tinted = (hex: string) => {
+        let v = cache.get(hex);
+        if (v === undefined) cache.set(hex, (v = saturate(hex)));
+        return v;
+    };
+
+    const lt = new LightningTime();
+    let last = "";
+
     function tick() {
-        const { boltColor, zapColor, sparkColor } = new LightningTime()
-            .convertToLightning(new Date()).colors;
-        root.style.setProperty("--bolt", saturate(boltColor));
-        root.style.setProperty("--zap", saturate(zapColor));
-        root.style.setProperty("--spark", saturate(sparkColor));
+        const { boltColor, zapColor, sparkColor } =
+            lt.convertToLightning(new Date()).colors;
+        const next = boltColor + zapColor + sparkColor;
+        // These are inherited custom properties on the root, so writing them
+        // restyles the whole tree. The finest channel only moves every ~21s,
+        // so bail on the twenty ticks in between.
+        if (next === last) return;
+        last = next;
+
+        root.style.setProperty("--bolt", tinted(boltColor));
+        root.style.setProperty("--zap", tinted(zapColor));
+        root.style.setProperty("--spark", tinted(sparkColor));
     }
 
-    // Each channel advances about every 5.6 minutes, so a second is already
-    // far finer than the data.
     tick();
     setInterval(tick, 1000);
 

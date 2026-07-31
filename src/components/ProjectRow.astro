@@ -228,8 +228,19 @@ const src = img ?? data.imageUrl;
             cool = setTimeout(() => list.removeAttribute("data-warm"), 400);
         });
 
-        const reflow = () => active && place(active);
+        // place() reads layout, so running it raw on every scroll event forces
+        // a synchronous reflow per frame. Coalesce to one per paint.
+        let queued = false;
+        function reflow() {
+            if (!active || queued) return;
+            queued = true;
+            requestAnimationFrame(() => {
+                queued = false;
+                if (active) place(active);
+            });
+        }
+
         addEventListener("scroll", reflow, { passive: true });
-        addEventListener("resize", reflow);
+        addEventListener("resize", reflow, { passive: true });
     }
 </script>

@@ -87,16 +87,33 @@
         text-decoration-line: underline;
         text-decoration-thickness: 1px;
         text-underline-offset: 3px;
-        /* Tinted from the sign's lightning time. Underline only: these
-           colours run as low as 1.2:1 on this ground, so they can never be
-           load-bearing for reading. */
+        /* Tinted from the sign's lightning time. Never carries the text
+           itself: these colours run as low as 1.2:1 on this ground, so the
+           highlight below stays a wash under ink rather than a text colour. */
         text-decoration-color: var(--link, var(--color-rule));
-        transition: text-decoration-thickness 120ms var(--ease-quint);
+        /* Negative margin cancels the padding, so the highlight grows outward
+           without nudging text out of line with unlinked rows. */
+        padding-inline: 3px;
+        margin-inline: -3px;
+        border-radius: 2px;
+        box-decoration-break: clone;
+        -webkit-box-decoration-break: clone;
+        transition: background-color 150ms var(--ease-quint);
     }
 
-    @media (hover: hover) and (pointer: fine) {
+    /* 30% keeps ink above 11:1 on every channel at every time of day. */
+    a:focus-visible,
+    a:hover {
+        background-color: color-mix(
+            in oklab,
+            var(--link, var(--color-rule)) 30%,
+            var(--color-page)
+        );
+    }
+
+    @media (hover: none) {
         a:hover {
-            text-decoration-thickness: 2px;
+            background-color: transparent;
         }
     }
 }

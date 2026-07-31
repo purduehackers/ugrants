@@ -14,8 +14,6 @@ async function localImage(name?: string) {
 
 export async function loadProjects() {
   const entries = await getCollection("projects");
-  // By name, not the id getCollection defaults to: ids are slugs, so
-  // "spread-the-love" would sort below "sign" while the titles do not.
   entries.sort((a, b) => a.data.name.localeCompare(b.data.name));
 
   return Promise.all(

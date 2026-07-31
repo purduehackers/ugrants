@@ -117,15 +117,6 @@
     margin-inline: auto;
 }
 
-@utility rule-dither {
-    height: 1px;
-    background-image: repeating-linear-gradient(
-        90deg,
-        var(--color-rule) 0 1px,
-        transparent 1px 2px
-    );
-}
-
 @utility dither-field {
     background-image: repeating-conic-gradient(
         var(--color-rule) 0% 25%,

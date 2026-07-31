@@ -61,8 +61,8 @@ const src = img ?? data.imageUrl;
         position: relative;
     }
 
-    /* Follows the pointer. translate and scale are separate properties so the
-       per-frame position write never fights the hover transition. */
+    /* translate and scale stay separate so the per-frame position write
+       does not fight the hover transition. */
     .reveal-card {
         position: fixed;
         top: 0;
@@ -86,7 +86,6 @@ const src = img ?? data.imageUrl;
         --dur: 200ms;
         --beat: 55ms;
 
-        /* Exit faster than enter: the user has already moved on. */
         transition:
             opacity 120ms var(--ease-quint),
             scale 120ms var(--ease-quint);
@@ -96,8 +95,6 @@ const src = img ?? data.imageUrl;
         flex: none;
     }
 
-    /* No reveal of its own: anything directional on a photo reads as a
-       progressive download rather than as intent. */
     .card-text {
         opacity: 0;
         translate: 0 4px;
@@ -106,7 +103,6 @@ const src = img ?? data.imageUrl;
             translate 120ms var(--ease-quint);
     }
 
-    /* Second card onward in a sweep runs at about half the time. */
     :global([data-warm]) .reveal-card {
         --dur: 110ms;
         --beat: 25ms;
@@ -125,7 +121,6 @@ const src = img ?? data.imageUrl;
         transition-delay: var(--beat);
     }
 
-    /* Nothing to hover, so the description is simply part of the row. */
     @media (hover: none) {
         .reveal-card {
             position: static;
@@ -174,8 +169,7 @@ const src = img ?? data.imageUrl;
     if (list) {
         const PAD = 16;
         const OFFSET = 18;
-        // Trails the pointer instead of tracking it exactly. Tying position
-        // 1:1 to the mouse reads nervous; easing lets it settle when you stop.
+        // Trailing rather than 1:1: lets it settle when you stop moving.
         const EASE = window.matchMedia("(prefers-reduced-motion: reduce)")
             .matches
             ? 1
@@ -192,16 +186,12 @@ const src = img ?? data.imageUrl;
         let cool: ReturnType<typeof setTimeout>;
 
         function target(x: number, y: number) {
-            // Horizontal: sit right of the pointer, flip left at the edge.
             let left = x + OFFSET;
             if (left + w + PAD > innerWidth) left = x - OFFSET - w;
             tx = Math.max(PAD, Math.min(left, innerWidth - w - PAD));
 
-            // Vertical: the card is about half the viewport tall, so simply
-            // offsetting below the pointer pins against the bottom clamp for
-            // most of the list. Glide it across the whole available range
-            // instead, which keeps the pointer at the same relative height
-            // within the card and stays continuous with no flip.
+            // Half the viewport tall, so offsetting below the pointer just
+            // pins to the bottom clamp. Glide the full range instead.
             const maxTop = innerHeight - h - PAD;
             ty =
                 maxTop <= PAD
@@ -229,11 +219,9 @@ const src = img ?? data.imageUrl;
             card = row.querySelector<HTMLElement>(".reveal-card");
             if (!card) return;
 
-            // Size is fixed, so measure once per open rather than per frame.
             w = card.offsetWidth;
             h = card.offsetHeight;
             target(x, y);
-            // Snap on appearance; only subsequent movement eases.
             cx = tx;
             cy = ty;
             write();
@@ -247,7 +235,6 @@ const src = img ?? data.imageUrl;
             row.addEventListener("pointerenter", (e) =>
                 open(row, e.clientX, e.clientY),
             );
-            // Keyboard focus has no pointer, so anchor to the row itself.
             row.addEventListener("focusin", () => {
                 const r = row.getBoundingClientRect();
                 open(row, r.left + 24, r.bottom);

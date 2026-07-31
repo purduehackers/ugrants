@@ -6,12 +6,13 @@ interface Props {
 }
 
 const { authors } = Astro.props;
+const last = authors.length - 1;
 ---
 
 {
     authors.map((a, i) => (
         <>
-            {i > 0 && " & "}
+            {i > 0 && (i === last ? " & " : ", ")}
             <OptionalLink href={a.url}>{a.name}</OptionalLink>
         </>
     ))

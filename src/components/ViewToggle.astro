@@ -1,6 +1,5 @@
 ---
-// Equal-width buttons, so the chip slides on a plain translateX(100%) with no
-// measurement. Filled rects echo the sign and hold up better than hairlines.
+// Equal-width buttons, so the chip slides on a plain translateX(100%).
 const label =
     "flex flex-1 cursor-pointer items-center justify-center rounded-chip px-3 py-2 text-muted transition-colors duration-200 ease-quint aria-pressed:text-ink";
 ---
@@ -46,8 +45,7 @@ const label =
 </div>
 
 <style>
-    /* data-chip-view, not data-view: the content swap is delayed for the
-       crossfade, but the control must respond on the press frame. */
+    /* data-chip-view: the content swap is delayed, the control is not. */
     :global(:root[data-chip-view="grid"]) [data-chip] {
         transform: translateX(100%);
     }

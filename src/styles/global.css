@@ -85,10 +85,8 @@
         text-decoration-line: underline;
         text-decoration-thickness: 1px;
         text-underline-offset: 3px;
-        /* Underline only. These run as low as 1.2:1 on this ground, so the
-           hover stays a wash under ink rather than a text colour. */
+        /* Underline only: these run as low as 1.2:1 on this ground. */
         text-decoration-color: var(--link, var(--color-rule));
-        /* Negative margin cancels the padding so text stays aligned. */
         padding-inline: 3px;
         margin-inline: -3px;
         border-radius: 0;
@@ -148,7 +146,7 @@
 }
 
 /* backwards, not both: a lingering filter would make every row a stacking
-   context and trap the hovercard's z-index inside its own row. */
+   context. */
 @utility enter {
     animation: ug-enter 300ms var(--ease-quint) backwards;
     animation-delay: calc(var(--i, 0) * 40ms);

@@ -66,6 +66,21 @@
     "description": "A computer architecture that allows humans to perform computations by manipulating the Rubik's Cube by hand with a robot to do the hard work for you."
   },
   {
+    "id": "spread-the-love",
+    "image": "spread-the-love.jpg",
+    "name": "Spread The Love",
+    "authors": [
+      { "name": "Saahil", "url": "https://saahil.xyz" },
+      { "name": "Jadden", "url": "https://jaddens.page" },
+      { "name": "Alicia", "url": "https://alicias.page" },
+      { "name": "Mason" }
+    ],
+    "urls": {
+      "project": "https://store.steampowered.com/app/3852520/spread_the_love"
+    },
+    "description": "A silly dating sim where your flavor decides your fate. Customize your profile, flirt with six lovably unique characters, and try to survive your first date!"
+  },
+  {
     "id": "sign",
     "image": "sign.jpg",
     "name": "The Sign",

@@ -50,21 +50,14 @@ const fitMap: Record<ImageFit, keyof FitEnum> = {
   inside: "inside",
 };
 
-// Grey levels to quantise to, and the only knob for how loud the dither is:
-// fewer levels means a wider gap between shades, so more error is pushed into
-// neighbouring pixels and the grain reads harder. The original site used 12;
-// 2 is a hard halftone.
+// The only knob for how loud the dither is. Fewer levels, harder grain.
 const LEVELS = 8;
 
-/**
- * Floyd–Steinberg error diffusion down to LEVELS greys, in place, on a
- * single-channel buffer. Serpentine scan: always going left-to-right piles
- * error against one edge and bands visibly in flat areas like skies.
- */
+// Floyd-Steinberg, in place, on a single-channel buffer. Serpentine scan:
+// one direction piles error against an edge and bands in flat areas.
 function dither(gray: Uint8Array, width: number, height: number) {
   const band = 255 / (LEVELS - 1);
 
-  // Error is fractional and runs outside 0-255, so it needs a float buffer.
   const buf = new Float32Array(gray.length);
   for (let i = 0; i < gray.length; i++) buf[i] = gray[i];
 
@@ -76,7 +69,6 @@ function dither(gray: Uint8Array, width: number, height: number) {
     const leftToRight = y % 2 === 0;
     const start = leftToRight ? 0 : width - 1;
     const end = leftToRight ? width : -1;
-    // Mirrored on reverse rows so error always travels ahead of the scan.
     const dir = leftToRight ? 1 : -1;
 
     for (let x = start; x !== end; x += dir) {
@@ -105,11 +97,10 @@ function dither(gray: Uint8Array, width: number, height: number) {
 const sharpService: LocalImageService<SharpImageServiceConfig> = {
   parseURL: baseService.parseURL,
   getURL: baseService.getURL,
-  // Without these the <img> ships with nothing but src: Astro emits img
-  // attributes through the service, not the component.
+  // Without these the <img> ships with nothing but src.
   getHTMLAttributes: baseService.getHTMLAttributes,
   getSrcSet: baseService.getSrcSet,
-  // Output is always PNG, so pin it or filenames claim .webp/.jpg.
+  // Pin the format or filenames claim .webp/.jpg.
   validateOptions(options, config) {
     const validated = baseService.validateOptions?.(options, config) ?? options;
     return { ...validated, format: "png" };
@@ -166,7 +157,6 @@ const sharpService: LocalImageService<SharpImageServiceConfig> = {
       });
     }
 
-    // GIFs keep the normal path: per-frame dithering desyncs the palette.
     if (isGifInput) {
       let quality: number | string | undefined = undefined;
       if (transform.quality) {
@@ -185,7 +175,6 @@ const sharpService: LocalImageService<SharpImageServiceConfig> = {
       return { data: await result.toBuffer(), format: "webp" };
     }
 
-    // Flatten onto white so transparency dithers as paper, not black.
     const { data, info } = await result
       .flatten({ background: "#ffffff" })
       .greyscale()
@@ -203,8 +192,7 @@ const sharpService: LocalImageService<SharpImageServiceConfig> = {
     const buffer = await sharp(gray, {
       raw: { width: info.width, height: info.height, channels: 1 },
     })
-      // libimagequant needs headroom or it merges bands (asking for exactly
-      // 8 yields 4), and its own dithering must be off.
+      // libimagequant merges bands without headroom, and must not re-dither.
       .png({ palette: true, colours: Math.min(256, LEVELS * 2), dither: 0 })
       .toBuffer();
 

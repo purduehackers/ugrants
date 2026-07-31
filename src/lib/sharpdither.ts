@@ -50,10 +50,11 @@ const fitMap: Record<ImageFit, keyof FitEnum> = {
   inside: "inside",
 };
 
-// Grey levels to quantise to. Matches the 12 the original site used: at 2
-// levels the dither becomes a hard halftone, which is far louder than the
-// soft grain this is meant to be.
-const LEVELS = 12;
+// Grey levels to quantise to, and the only knob for how loud the dither is:
+// fewer levels means a wider gap between shades, so more error is pushed into
+// neighbouring pixels and the grain reads harder. The original site used 12;
+// 2 is a hard halftone.
+const LEVELS = 8;
 
 /**
  * Floyd–Steinberg error diffusion down to LEVELS shades of grey.
@@ -212,9 +213,10 @@ const sharpService: LocalImageService<SharpImageServiceConfig> = {
     const buffer = await sharp(gray, {
       raw: { width: info.width, height: info.height, channels: 1 },
     })
-      // Indexed to the levels actually used, so the files stay small and the
-      // encoder never reintroduces intermediate shades.
-      .png({ palette: true, colours: LEVELS })
+      // libimagequant runs its own lossy pass, so it needs headroom above the
+      // levels actually used or it merges them (asking for exactly 8 yields
+      // 4), and its dithering has to be off or it re-dithers the dither.
+      .png({ palette: true, colours: Math.min(256, LEVELS * 2), dither: 0 })
       .toBuffer();
 
     return {

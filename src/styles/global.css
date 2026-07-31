@@ -87,13 +87,16 @@
         text-decoration-line: underline;
         text-decoration-thickness: 1px;
         text-underline-offset: 3px;
-        text-decoration-color: var(--color-rule);
-        transition: text-decoration-color 120ms var(--ease-quint);
+        /* Tinted from the sign's lightning time. Underline only: these
+           colours run as low as 1.2:1 on this ground, so they can never be
+           load-bearing for reading. */
+        text-decoration-color: var(--link, var(--color-rule));
+        transition: text-decoration-thickness 120ms var(--ease-quint);
     }
 
     @media (hover: hover) and (pointer: fine) {
         a:hover {
-            text-decoration-color: var(--color-ink);
+            text-decoration-thickness: 2px;
         }
     }
 }

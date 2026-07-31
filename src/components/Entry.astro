@@ -1,6 +1,6 @@
 ---
 import Link from "@components/Link.astro";
-import Sign from "@components/Sign.svelte";
+import Sign from "@components/Sign.astro";
 ---
 
 <header class="flex flex-col gap-5">
@@ -10,9 +10,16 @@ import Sign from "@components/Sign.svelte";
                 <h1
                     class="flex items-end gap-2 text-[16px] leading-none font-medium tracking-[-0.03em]"
                 >
-                    <span class="block size-[18px] shrink-0">
-                        <Sign client:load />
-                    </span>
+                    <a
+                        href="https://purduehackers.com"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="purdue hackers"
+                        data-plain
+                        class="block size-[18px] shrink-0 no-underline transition-transform duration-150 ease-quint active:scale-[0.97]"
+                    >
+                        <Sign />
+                    </a>
                     <span>µgrants</span>
                 </h1>
                 <p class="text-[14px] leading-none text-muted">

@@ -1,0 +1,46 @@
+---
+// Publishes the current lightning-time colours as :root variables. The sign
+// paints itself from them and links tint their underline from the same
+// source, so there is one owner of the colour.
+---
+
+<svg
+    class="h-full w-full"
+    viewBox="0 0 300 300"
+    xmlns="http://www.w3.org/2000/svg"
+    aria-hidden="true"
+    focusable="false"
+>
+    <!-- AI Generated -->
+    <rect x="100" y="0" width="100" height="200" fill="var(--zap, currentColor)" />
+    <rect x="200" y="100" width="100" height="200" fill="var(--spark, currentColor)" />
+    <rect x="0" y="200" width="100" height="100" fill="var(--bolt, currentColor)" />
+</svg>
+
+<script>
+    import { LightningTime } from "@purduehackers/time";
+
+    const root = document.documentElement;
+
+    function tick() {
+        const { boltColor, zapColor, sparkColor } = new LightningTime()
+            .convertToLightning(new Date()).colors;
+        root.style.setProperty("--bolt", boltColor);
+        root.style.setProperty("--zap", zapColor);
+        root.style.setProperty("--spark", sparkColor);
+    }
+
+    // Each channel advances about every 5.6 minutes, so a second is already
+    // far finer than the data.
+    tick();
+    setInterval(tick, 1000);
+
+    // Links take one channel each, cycling in document order, so the set of
+    // them reads like the sign rather than one flat accent.
+    const channels = ["--bolt", "--zap", "--spark"];
+    document
+        .querySelectorAll<HTMLElement>("a:not([data-plain])")
+        .forEach((a, i) =>
+            a.style.setProperty("--link", `var(${channels[i % 3]})`),
+        );
+</script>

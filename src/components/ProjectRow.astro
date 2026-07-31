@@ -36,17 +36,17 @@ const src = img ?? data.imageUrl;
             {
                 src ? (
                     <Image
-                        class="dithered w-[288px]"
+                        class="dithered w-[var(--tile)]"
                         src={src}
-                        width={288}
-                        height={288}
+                        width={248}
+                        height={248}
                         fit="cover"
                         alt=""
                         loading="eager"
                         fetchpriority="low"
                     />
                 ) : (
-                    <div class="dither-field aspect-square w-[288px]" />
+                    <div class="dither-field aspect-square w-[var(--tile)]" />
                 )
             }
         </div>
@@ -68,7 +68,7 @@ const src = img ?? data.imageUrl;
         left: calc(100% + 20px);
         z-index: 20;
         display: flex;
-        width: 320px;
+        width: calc(var(--tile) + 32px);
         flex-direction: column;
         gap: 10px;
         padding: 16px;
@@ -123,7 +123,7 @@ const src = img ?? data.imageUrl;
 
     /* No gutter beside the column to park the card, so right-align it over
        the column rather than letting it run off-screen. */
-    @media (max-width: 1320px) {
+    @media (max-width: 1200px) {
         .reveal-card {
             left: auto;
             right: 0;

@@ -21,22 +21,22 @@ const src = img ?? data.imageUrl;
 ---
 
 <figure
-    class="tile enter flex w-[312px] max-w-full flex-col gap-2"
+    class="tile enter flex w-[var(--tile)] max-w-full flex-col gap-2"
     style={`--i: ${Math.min(index, 10) + 5}`}
 >
-    <div class="tile-frame relative w-[312px] max-w-full border border-hairline">
+    <div class="tile-frame relative w-[var(--tile)] max-w-full border border-hairline">
         {
             src ? (
                 <Image
-                    class="dithered w-[312px] max-w-full"
+                    class="dithered w-[var(--tile)] max-w-full"
                     src={src}
-                    width={312}
-                    height={312}
+                    width={248}
+                    height={248}
                     fit="cover"
                     alt={data.name}
                 />
             ) : (
-                <div class="dither-field aspect-square w-[312px] max-w-full" />
+                <div class="dither-field aspect-square w-[var(--tile)] max-w-full" />
             )
         }
 

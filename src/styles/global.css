@@ -49,7 +49,11 @@
     --radius-track: 5px;
 
     --ease-quint: cubic-bezier(0.2, 0, 0, 1);
-    --measure: 640px;
+
+    --measure: 512px;
+    /* Two up inside the measure, 16px gutter. Tiles render 1:1, so this has
+       to stay in step with the width passed to <Image>. */
+    --tile: 248px;
 }
 
 @layer base {

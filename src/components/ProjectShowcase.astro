@@ -26,7 +26,7 @@ const entries = await loadProjects();
 
         <div
             data-view-grid
-            class="grid justify-center gap-4 [grid-template-columns:repeat(auto-fill,312px)]"
+            class="grid justify-center gap-4 [grid-template-columns:repeat(auto-fill,var(--tile))]"
         >
             {
                 entries.map(({ project, img }, i) => (

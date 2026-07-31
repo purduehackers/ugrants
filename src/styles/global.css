@@ -101,12 +101,11 @@
         transition: background-color 150ms var(--ease-quint);
     }
 
-    /* 30% keeps ink above 11:1 on every channel at every time of day. */
     a:focus-visible,
     a:hover {
         background-color: color-mix(
             in oklab,
-            var(--link, var(--color-rule)) 30%,
+            var(--link, var(--color-rule)) 15%,
             var(--color-page)
         );
     }

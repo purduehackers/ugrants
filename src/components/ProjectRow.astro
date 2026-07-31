@@ -191,13 +191,22 @@ const src = img ?? data.imageUrl;
         let raf = 0;
         let cool: ReturnType<typeof setTimeout>;
 
-        // Prefer down-right of the pointer, flip left when it would run off
-        // the edge, then clamp both axes into the viewport.
         function target(x: number, y: number) {
+            // Horizontal: sit right of the pointer, flip left at the edge.
             let left = x + OFFSET;
             if (left + w + PAD > innerWidth) left = x - OFFSET - w;
             tx = Math.max(PAD, Math.min(left, innerWidth - w - PAD));
-            ty = Math.max(PAD, Math.min(y + OFFSET, innerHeight - h - PAD));
+
+            // Vertical: the card is about half the viewport tall, so simply
+            // offsetting below the pointer pins against the bottom clamp for
+            // most of the list. Glide it across the whole available range
+            // instead, which keeps the pointer at the same relative height
+            // within the card and stays continuous with no flip.
+            const maxTop = innerHeight - h - PAD;
+            ty =
+                maxTop <= PAD
+                    ? PAD
+                    : PAD + (y / innerHeight) * (maxTop - PAD);
         }
 
         function write() {

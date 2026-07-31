@@ -18,11 +18,10 @@ const {
 } = Astro.props;
 
 const src = img ?? data.imageUrl;
-const ordinal = String(index + 1).padStart(2, "0");
 ---
 
 <div
-    class="enter -mx-3 grid grid-cols-[minmax(0,1fr)_56px] items-center gap-x-3 border-b border-hairline px-3 py-2.5 transition-colors duration-150 ease-quint hover:bg-ink/[0.03] sm:min-h-[50px] sm:grid-cols-[minmax(0,1fr)_304px_56px]"
+    class="enter -mx-3 grid min-h-[50px] grid-cols-[minmax(0,1fr)_24px] items-center gap-x-3 border-b border-hairline px-3 py-2.5 transition-colors duration-150 ease-quint hover:bg-ink/[0.03]"
     style={`--i: ${Math.min(index, 10) + 6}`}
 >
     <div class="flex min-w-0 flex-col gap-0.5">
@@ -34,25 +33,20 @@ const ordinal = String(index + 1).padStart(2, "0");
         </span>
     </div>
 
-    <div class="hidden h-8 w-[304px] sm:block" aria-hidden="true">
+    <div class="size-6" aria-hidden="true">
         {
             src ? (
                 <Image
-                    class="dithered h-8 w-[304px]"
+                    class="dithered size-6"
                     src={src}
-                    width={304}
-                    height={32}
+                    width={24}
+                    height={24}
                     fit="cover"
                     alt=""
                 />
             ) : (
-                <div class="dither-field h-8 w-[304px]" />
+                <div class="dither-field size-6" />
             )
         }
     </div>
-
-    <span
-        class="self-start pt-0.5 text-right font-mono text-[13px] leading-[1.35] tabular-nums text-muted sm:self-center sm:pt-0"
-        >{ordinal}</span
-    >
 </div>

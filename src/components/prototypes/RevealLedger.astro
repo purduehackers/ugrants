@@ -9,16 +9,17 @@ interface Props {
 }
 
 const { entries } = Astro.props;
+const idle = "hover a project to read its description";
 ---
 
 <div class="reveal-ledger flex flex-col">
     <div class="flex flex-col">
         {
-            entries.map(({ project: { data }, img }, i) => {
+            entries.map(({ project: { data }, img }) => {
                 const src = img ?? data.imageUrl;
                 return (
                     <div
-                        class="reveal-row -mx-3 grid min-h-[50px] grid-cols-[minmax(0,1fr)_304px_56px] items-center gap-x-3 border-b border-hairline px-3 py-2.5 transition-colors duration-150 ease-quint hover:bg-ink/[0.03]"
+                        class="reveal-row -mx-3 grid min-h-[50px] grid-cols-[minmax(0,1fr)_24px] items-center gap-x-3 border-b border-hairline px-3 py-2.5 transition-colors duration-150 ease-quint hover:bg-ink/[0.03]"
                         tabindex="0"
                         data-description={data.description}
                     >
@@ -33,24 +34,20 @@ const { entries } = Astro.props;
                             </span>
                         </div>
 
-                        <div class="h-8 w-[304px]" aria-hidden="true">
+                        <div class="size-6" aria-hidden="true">
                             {src ? (
                                 <Image
-                                    class="dithered h-8 w-[304px]"
+                                    class="dithered size-6"
                                     src={src}
-                                    width={304}
-                                    height={32}
+                                    width={24}
+                                    height={24}
                                     fit="cover"
                                     alt=""
                                 />
                             ) : (
-                                <div class="dither-field h-8 w-[304px]" />
+                                <div class="dither-field size-6" />
                             )}
                         </div>
-
-                        <span class="text-right font-mono text-[13px] tabular-nums text-muted">
-                            {String(i + 1).padStart(2, "0")}
-                        </span>
                     </div>
                 );
             })
@@ -59,9 +56,7 @@ const { entries } = Astro.props;
 
     <div class="ledger-bar">
         <div class="rule-dither w-full"></div>
-        <p class="ledger-text" aria-live="polite">
-            hover a project to read its description
-        </p>
+        <p class="ledger-text" aria-live="polite">{idle}</p>
     </div>
 </div>
 
@@ -109,7 +104,7 @@ const { entries } = Astro.props;
     const out = wrap?.querySelector<HTMLElement>(".ledger-text");
 
     if (wrap && out) {
-        const idle = "hover a project to read its description";
+        const idle = out.textContent ?? "";
         const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
         let timer: ReturnType<typeof setTimeout>;
         let showing = idle;

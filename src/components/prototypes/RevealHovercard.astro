@@ -13,11 +13,11 @@ const { entries } = Astro.props;
 
 <div class="reveal-hovercard relative flex flex-col">
     {
-        entries.map(({ project: { data }, img }, i) => {
+        entries.map(({ project: { data }, img }) => {
             const src = img ?? data.imageUrl;
             return (
                 <div
-                    class="reveal-row -mx-3 grid grid-cols-[minmax(0,1fr)_304px_56px] items-center gap-x-3 border-b border-hairline px-3 py-2.5 transition-colors duration-150 ease-quint hover:bg-ink/[0.03] min-h-[50px]"
+                    class="reveal-row -mx-3 grid min-h-[50px] grid-cols-[minmax(0,1fr)_24px] items-center gap-x-3 border-b border-hairline px-3 py-2.5 transition-colors duration-150 ease-quint hover:bg-ink/[0.03]"
                     tabindex="0"
                 >
                     <div class="flex min-w-0 flex-col gap-0.5">
@@ -31,24 +31,20 @@ const { entries } = Astro.props;
                         </span>
                     </div>
 
-                    <div class="h-8 w-[304px]" aria-hidden="true">
+                    <div class="size-6" aria-hidden="true">
                         {src ? (
                             <Image
-                                class="dithered h-8 w-[304px]"
+                                class="dithered size-6"
                                 src={src}
-                                width={304}
-                                height={32}
+                                width={24}
+                                height={24}
                                 fit="cover"
                                 alt=""
                             />
                         ) : (
-                            <div class="dither-field h-8 w-[304px]" />
+                            <div class="dither-field size-6" />
                         )}
                     </div>
-
-                    <span class="text-right font-mono text-[13px] tabular-nums text-muted">
-                        {String(i + 1).padStart(2, "0")}
-                    </span>
 
                     <div class="reveal-card" role="tooltip">
                         <div class="w-[288px] border border-hairline">
@@ -82,7 +78,8 @@ const { entries } = Astro.props;
 
     .reveal-card {
         position: absolute;
-        top: -8px;
+        /* Set by script to keep the whole card inside the viewport. */
+        top: var(--card-top, -8px);
         left: calc(100% + 20px);
         z-index: 20;
         display: flex;
@@ -109,22 +106,6 @@ const { entries } = Astro.props;
         transition-duration: 0ms;
     }
 
-    /* Not enough gutter beside the column to park the card, so drop it
-       below the row instead of letting it run off-screen. */
-    @media (max-width: 1320px) {
-        .reveal-card {
-            top: calc(100% + 8px);
-            left: 0;
-            transform: scale(0.97) translateY(-4px);
-            transform-origin: top left;
-        }
-
-        .reveal-row:hover .reveal-card,
-        .reveal-row:focus-visible .reveal-card {
-            transform: scale(1) translateY(0);
-        }
-    }
-
     @media (hover: hover) and (pointer: fine) {
         .reveal-row:hover .reveal-card {
             opacity: 1;
@@ -137,28 +118,71 @@ const { entries } = Astro.props;
         transform: scale(1) translateX(0);
     }
 
-    @media (prefers-reduced-motion: reduce) {
+    /* No gutter beside the column to park the card, so sit it over the column
+       instead of letting it run off-screen sideways. */
+    @media (max-width: 1320px) {
         .reveal-card {
-            transition: opacity 120ms linear;
-            transform: none;
+            left: auto;
+            right: 0;
+            transform: scale(0.97) translateY(-4px);
+            transform-origin: top right;
         }
+
         .reveal-row:hover .reveal-card,
         .reveal-row:focus-visible .reveal-card {
+            transform: scale(1) translateY(0);
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .reveal-card,
+        .reveal-row:hover .reveal-card,
+        .reveal-row:focus-visible .reveal-card {
+            transition: opacity 120ms linear;
             transform: none;
         }
     }
 </style>
 
 <script>
-    const wrap = document.querySelector(".reveal-hovercard");
+    const wrap = document.querySelector<HTMLElement>(".reveal-hovercard");
+
     if (wrap) {
+        const GAP = 16;
+        const rows = [...wrap.querySelectorAll<HTMLElement>(".reveal-row")];
+        let active: HTMLElement | null = null;
         let cool: ReturnType<typeof setTimeout>;
-        wrap.addEventListener("pointerenter", () => {
+
+        // Cards are taller than a row and the last ones would hang off the
+        // bottom, so clamp each into the viewport rather than flipping it.
+        function place(row: HTMLElement) {
+            const card = row.querySelector<HTMLElement>(".reveal-card");
+            if (!card) return;
+            const rect = row.getBoundingClientRect();
+            const max = window.innerHeight - card.offsetHeight - GAP;
+            const top = Math.max(GAP, Math.min(rect.top - 8, max));
+            card.style.setProperty("--card-top", `${top - rect.top}px`);
+        }
+
+        function open(row: HTMLElement) {
+            active = row;
             clearTimeout(cool);
-            wrap.setAttribute("data-warm", "");
-        });
+            wrap!.setAttribute("data-warm", "");
+            place(row);
+        }
+
+        for (const row of rows) {
+            row.addEventListener("pointerenter", () => open(row));
+            row.addEventListener("focus", () => open(row));
+        }
+
         wrap.addEventListener("pointerleave", () => {
+            active = null;
             cool = setTimeout(() => wrap.removeAttribute("data-warm"), 400);
         });
+
+        const reflow = () => active && place(active);
+        addEventListener("scroll", reflow, { passive: true });
+        addEventListener("resize", reflow);
     }
 </script>

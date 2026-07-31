@@ -13,14 +13,14 @@ const { entries } = Astro.props;
 
 <div class="reveal-unfold flex flex-col">
     {
-        entries.map(({ project: { data }, img }, i) => {
+        entries.map(({ project: { data }, img }) => {
             const src = img ?? data.imageUrl;
             return (
                 <div
                     class="reveal-row -mx-3 border-b border-hairline px-3 py-2.5 transition-colors duration-150 ease-quint hover:bg-ink/[0.03]"
                     tabindex="0"
                 >
-                    <div class="grid min-h-[50px] grid-cols-[minmax(0,1fr)_304px_56px] items-center gap-x-3">
+                    <div class="grid min-h-[50px] grid-cols-[minmax(0,1fr)_24px] items-center gap-x-3">
                         <div class="flex min-w-0 flex-col gap-0.5">
                             <span class="truncate text-[14px] leading-[1.35]">
                                 <OptionalLink href={data.urls.project}>
@@ -32,24 +32,20 @@ const { entries } = Astro.props;
                             </span>
                         </div>
 
-                        <div class="h-8 w-[304px]" aria-hidden="true">
+                        <div class="size-6" aria-hidden="true">
                             {src ? (
                                 <Image
-                                    class="dithered h-8 w-[304px]"
+                                    class="dithered size-6"
                                     src={src}
-                                    width={304}
-                                    height={32}
+                                    width={24}
+                                    height={24}
                                     fit="cover"
                                     alt=""
                                 />
                             ) : (
-                                <div class="dither-field h-8 w-[304px]" />
+                                <div class="dither-field size-6" />
                             )}
                         </div>
-
-                        <span class="text-right font-mono text-[13px] tabular-nums text-muted">
-                            {String(i + 1).padStart(2, "0")}
-                        </span>
                     </div>
 
                     <div class="unfold">
@@ -62,8 +58,8 @@ const { entries } = Astro.props;
 </div>
 
 <style>
-    /* 0fr -> 1fr is the one height animation that stays cheap enough to use
-       here; max-height would need a magic number per row. */
+    /* 0fr -> 1fr is the one height animation cheap enough to use here;
+       max-height would need a magic number per row. */
     .unfold {
         display: grid;
         grid-template-rows: 0fr;

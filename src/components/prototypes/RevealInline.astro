@@ -13,11 +13,11 @@ const { entries } = Astro.props;
 
 <div class="reveal-inline flex flex-col">
     {
-        entries.map(({ project: { data }, img }, i) => {
+        entries.map(({ project: { data }, img }) => {
             const src = img ?? data.imageUrl;
             return (
                 <div
-                    class="reveal-row -mx-3 grid min-h-[50px] grid-cols-[minmax(0,1fr)_304px_56px] items-center gap-x-3 border-b border-hairline px-3 py-2.5 transition-colors duration-150 ease-quint hover:bg-ink/[0.03]"
+                    class="reveal-row -mx-3 grid min-h-[50px] grid-cols-[minmax(0,1fr)_24px] items-center gap-x-3 border-b border-hairline px-3 py-2.5 transition-colors duration-150 ease-quint hover:bg-ink/[0.03] sm:grid-cols-[minmax(0,1fr)_300px_24px]"
                     tabindex="0"
                 >
                     <div class="flex min-w-0 flex-col gap-0.5">
@@ -31,27 +31,24 @@ const { entries } = Astro.props;
                         </span>
                     </div>
 
-                    <div class="swap-slot h-8 w-[304px]">
-                        <div class="swap-strip" aria-hidden="true">
-                            {src ? (
-                                <Image
-                                    class="dithered h-8 w-[304px]"
-                                    src={src}
-                                    width={304}
-                                    height={32}
-                                    fit="cover"
-                                    alt=""
-                                />
-                            ) : (
-                                <div class="dither-field h-8 w-[304px]" />
-                            )}
-                        </div>
-                        <p class="swap-desc">{data.description}</p>
-                    </div>
+                    <p class="inline-desc hidden sm:block">
+                        {data.description}
+                    </p>
 
-                    <span class="text-right font-mono text-[13px] tabular-nums text-muted">
-                        {String(i + 1).padStart(2, "0")}
-                    </span>
+                    <div class="size-6" aria-hidden="true">
+                        {src ? (
+                            <Image
+                                class="dithered size-6"
+                                src={src}
+                                width={24}
+                                height={24}
+                                fit="cover"
+                                alt=""
+                            />
+                        ) : (
+                            <div class="dither-field size-6" />
+                        )}
+                    </div>
                 </div>
             );
         })
@@ -59,56 +56,38 @@ const { entries } = Astro.props;
 </div>
 
 <style>
-    .swap-slot {
-        position: relative;
-    }
-
-    .swap-strip,
-    .swap-desc {
-        position: absolute;
-        inset: 0;
-        transition:
-            opacity 140ms var(--ease-quint),
-            filter 140ms var(--ease-quint);
-    }
-
-    .swap-desc {
+    /* Fades into the space the ordinals used to occupy, so the row never
+       changes size and the list never reflows. */
+    .inline-desc {
+        margin: 0;
         display: -webkit-box;
         -webkit-box-orient: vertical;
         -webkit-line-clamp: 2;
         overflow: hidden;
-        margin: 0;
         font-size: 12px;
         line-height: 1.35;
         color: var(--color-muted);
         opacity: 0;
         filter: blur(3px);
+        transition:
+            opacity 140ms var(--ease-quint),
+            filter 140ms var(--ease-quint);
     }
 
     @media (hover: hover) and (pointer: fine) {
-        .reveal-row:hover .swap-strip {
-            opacity: 0;
-            filter: blur(3px);
-        }
-        .reveal-row:hover .swap-desc {
+        .reveal-row:hover .inline-desc {
             opacity: 1;
             filter: blur(0);
         }
     }
 
-    .reveal-row:focus-visible .swap-strip {
-        opacity: 0;
-        filter: blur(3px);
-    }
-
-    .reveal-row:focus-visible .swap-desc {
+    .reveal-row:focus-visible .inline-desc {
         opacity: 1;
         filter: blur(0);
     }
 
     @media (prefers-reduced-motion: reduce) {
-        .swap-strip,
-        .swap-desc {
+        .inline-desc {
             transition-duration: 80ms;
             filter: none !important;
         }

@@ -8,7 +8,7 @@ import Sign from "@components/Sign.svelte";
         <div class="enter" style="--i: 0">
             <div class="flex items-end gap-2 font-mono whitespace-nowrap">
                 <h1
-                    class="flex items-end gap-1.5 text-[16px] leading-none font-medium tracking-[-0.03em]"
+                    class="flex items-end gap-2 text-[16px] leading-none font-medium tracking-[-0.03em]"
                 >
                     <span class="block size-[18px] shrink-0">
                         <Sign client:load />
@@ -27,18 +27,25 @@ import Sign from "@components/Sign.svelte";
 
         <div class="flex flex-col gap-2 pl-2 text-muted">
             <div class="enter" style="--i: 1">
-                <p class="text-[14px] leading-[1.35]">
-                    <span class="font-mono font-medium text-ink">1</span>
-                    grants by <Link href="https://purduehackers.com"
-                        >purdue hackers</Link
-                    > to fund your ambitious projects or artworks
+                <p class="flex gap-3 text-[14px] leading-[1.35]">
+                    <span class="shrink-0 font-mono font-medium text-ink">1</span
+                    >
+                    <span
+                        >grants by <Link href="https://purduehackers.com"
+                            >purdue hackers</Link
+                        > to fund your ambitious projects or artworks</span
+                    >
                 </p>
             </div>
             <div class="enter" style="--i: 2">
-                <p class="text-[14px] leading-[1.35]">
-                    <span class="font-mono font-medium text-ink">2</span>
-                    purdue hackers is an organization focused on giving students
-                    the resources to build within proximity of other talented people
+                <p class="flex gap-3 text-[14px] leading-[1.35]">
+                    <span class="shrink-0 font-mono font-medium text-ink">2</span
+                    >
+                    <span
+                        >purdue hackers is an organization focused on giving
+                        students the resources to build within proximity of other
+                        talented people</span
+                    >
                 </p>
             </div>
         </div>

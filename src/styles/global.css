@@ -92,16 +92,34 @@
         border-radius: 0;
         box-decoration-break: clone;
         -webkit-box-decoration-break: clone;
-        transition: background-color 150ms var(--ease-quint);
+        transition:
+            color 150ms var(--ease-quint),
+            background-color 150ms var(--ease-quint);
     }
 
+    /* Stays monochrome without color-mix, since the raw channel runs as low
+       as 1.07:1 and would be illegible as text. */
     a:focus-visible,
     a:hover {
-        background-color: color-mix(
-            in oklab,
-            var(--link, var(--color-rule)) 15%,
-            var(--color-page)
-        );
+        color: var(--color-ink);
+        background-color: var(--color-hairline);
+    }
+
+    /* Half ink keeps the channel's hue while clearing 4.5:1. */
+    @supports (color: color-mix(in oklab, red, red)) {
+        a:focus-visible,
+        a:hover {
+            color: color-mix(
+                in oklab,
+                var(--link, var(--color-ink)) 50%,
+                var(--color-ink)
+            );
+            background-color: color-mix(
+                in oklab,
+                var(--link, var(--color-rule)) 15%,
+                var(--color-page)
+            );
+        }
     }
 
     @media (hover: none) {

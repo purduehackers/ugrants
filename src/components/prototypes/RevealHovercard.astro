@@ -1,0 +1,164 @@
+---
+import { Image } from "astro:assets";
+import Authors from "@components/Authors.astro";
+import OptionalLink from "@components/OptionalLink.astro";
+import type { LoadedProject } from "@lib/projects";
+
+interface Props {
+    entries: LoadedProject[];
+}
+
+const { entries } = Astro.props;
+---
+
+<div class="reveal-hovercard relative flex flex-col">
+    {
+        entries.map(({ project: { data }, img }, i) => {
+            const src = img ?? data.imageUrl;
+            return (
+                <div
+                    class="reveal-row -mx-3 grid grid-cols-[minmax(0,1fr)_304px_56px] items-center gap-x-3 border-b border-hairline px-3 py-2.5 transition-colors duration-150 ease-quint hover:bg-ink/[0.03] min-h-[50px]"
+                    tabindex="0"
+                >
+                    <div class="flex min-w-0 flex-col gap-0.5">
+                        <span class="truncate text-[14px] leading-[1.35] font-semibold">
+                            <OptionalLink href={data.urls.project}>
+                                {data.name}
+                            </OptionalLink>
+                        </span>
+                        <span class="truncate text-[13px] leading-[1.35] text-muted">
+                            <Authors authors={data.authors} />
+                        </span>
+                    </div>
+
+                    <div class="h-8 w-[304px]" aria-hidden="true">
+                        {src ? (
+                            <Image
+                                class="dithered h-8 w-[304px]"
+                                src={src}
+                                width={304}
+                                height={32}
+                                fit="cover"
+                                alt=""
+                            />
+                        ) : (
+                            <div class="dither-field h-8 w-[304px]" />
+                        )}
+                    </div>
+
+                    <span class="text-right font-mono text-[13px] tabular-nums text-muted">
+                        {String(i + 1).padStart(2, "0")}
+                    </span>
+
+                    <div class="reveal-card" role="tooltip">
+                        <div class="w-[288px] border border-hairline">
+                            {src ? (
+                                <Image
+                                    class="dithered w-[288px]"
+                                    src={src}
+                                    width={288}
+                                    height={288}
+                                    fit="cover"
+                                    alt=""
+                                />
+                            ) : (
+                                <div class="dither-field aspect-square w-[288px]" />
+                            )}
+                        </div>
+                        <p class="text-[13px] leading-[1.4] text-ink">
+                            {data.description}
+                        </p>
+                    </div>
+                </div>
+            );
+        })
+    }
+</div>
+
+<style>
+    .reveal-row {
+        position: relative;
+    }
+
+    .reveal-card {
+        position: absolute;
+        top: -8px;
+        left: calc(100% + 20px);
+        z-index: 20;
+        display: flex;
+        width: 320px;
+        flex-direction: column;
+        gap: 10px;
+        padding: 16px;
+        background: var(--color-page);
+        border: 1px solid var(--color-hairline);
+        border-radius: var(--radius-chip);
+        box-shadow: 0 8px 28px rgb(10 10 10 / 0.1);
+        opacity: 0;
+        transform: scale(0.97) translateX(-4px);
+        transform-origin: left center;
+        pointer-events: none;
+        transition:
+            opacity 160ms var(--ease-quint),
+            transform 160ms var(--ease-quint);
+    }
+
+    /* Once one card is open, the rest open instantly. The delay exists to
+       stop accidental activation, not to slow a deliberate sweep. */
+    :global([data-warm]) .reveal-card {
+        transition-duration: 0ms;
+    }
+
+    /* Not enough gutter beside the column to park the card, so drop it
+       below the row instead of letting it run off-screen. */
+    @media (max-width: 1320px) {
+        .reveal-card {
+            top: calc(100% + 8px);
+            left: 0;
+            transform: scale(0.97) translateY(-4px);
+            transform-origin: top left;
+        }
+
+        .reveal-row:hover .reveal-card,
+        .reveal-row:focus-visible .reveal-card {
+            transform: scale(1) translateY(0);
+        }
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+        .reveal-row:hover .reveal-card {
+            opacity: 1;
+            transform: scale(1) translateX(0);
+        }
+    }
+
+    .reveal-row:focus-visible .reveal-card {
+        opacity: 1;
+        transform: scale(1) translateX(0);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .reveal-card {
+            transition: opacity 120ms linear;
+            transform: none;
+        }
+        .reveal-row:hover .reveal-card,
+        .reveal-row:focus-visible .reveal-card {
+            transform: none;
+        }
+    }
+</style>
+
+<script>
+    const wrap = document.querySelector(".reveal-hovercard");
+    if (wrap) {
+        let cool: ReturnType<typeof setTimeout>;
+        wrap.addEventListener("pointerenter", () => {
+            clearTimeout(cool);
+            wrap.setAttribute("data-warm", "");
+        });
+        wrap.addEventListener("pointerleave", () => {
+            cool = setTimeout(() => wrap.removeAttribute("data-warm"), 400);
+        });
+    }
+</script>

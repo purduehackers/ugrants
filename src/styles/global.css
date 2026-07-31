@@ -8,22 +8,6 @@
     src: url("/fonts/PolySans-Slim.woff2") format("woff2");
 }
 
-@font-face {
-    font-family: "PolySans";
-    font-style: italic;
-    font-weight: 300;
-    font-display: swap;
-    src: url("/fonts/PolySans-SlimItalic.woff2") format("woff2");
-}
-
-@font-face {
-    font-family: "PolySans";
-    font-style: normal;
-    font-weight: 600;
-    font-display: swap;
-    src: url("/fonts/PolySans-Median.woff2") format("woff2");
-}
-
 /* Geist Mono, latin + latin-ext. Carries the wordmark line (µ ˈ ī) and the
    numeric column; PolySans has none of those glyphs. */
 @font-face {

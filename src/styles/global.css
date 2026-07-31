@@ -140,12 +140,6 @@
     background-size: 2px 2px;
 }
 
-/* Rendered 1:1 at 1x. Resampling a 1-bit image turns the dither to grey mush. */
-@utility dithered {
-    display: block;
-    image-rendering: pixelated;
-}
-
 @keyframes ug-enter {
     from {
         opacity: 0;

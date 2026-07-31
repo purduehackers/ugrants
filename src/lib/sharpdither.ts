@@ -50,8 +50,13 @@ const fitMap: Record<ImageFit, keyof FitEnum> = {
   inside: "inside",
 };
 
+// Grey levels to quantise to. Matches the 12 the original site used: at 2
+// levels the dither becomes a hard halftone, which is far louder than the
+// soft grain this is meant to be.
+const LEVELS = 12;
+
 /**
- * Floyd–Steinberg error diffusion down to pure black and white.
+ * Floyd–Steinberg error diffusion down to LEVELS shades of grey.
  *
  * Serpentine scan (alternating row direction) rather than always
  * left-to-right: a single direction accumulates error toward one edge and
@@ -59,7 +64,9 @@ const fitMap: Record<ImageFit, keyof FitEnum> = {
  *
  * Operates on a single-channel 8-bit greyscale buffer, in place.
  */
-function dither1Bit(gray: Uint8Array, width: number, height: number) {
+function dither(gray: Uint8Array, width: number, height: number) {
+  const band = 255 / (LEVELS - 1);
+
   // Error is fractional and routinely runs outside 0–255, so it needs its own
   // float buffer; quantising into the Uint8Array as we go would clip it.
   const buf = new Float32Array(gray.length);
@@ -73,29 +80,28 @@ function dither1Bit(gray: Uint8Array, width: number, height: number) {
     const leftToRight = y % 2 === 0;
     const start = leftToRight ? 0 : width - 1;
     const end = leftToRight ? width : -1;
-    const step = leftToRight ? 1 : -1;
-    // Mirror the kernel when we reverse, so error always travels "ahead" of
-    // the scan rather than back into pixels we have already committed.
-    const ahead = step;
+    // Mirror the kernel when we reverse, so error always travels ahead of the
+    // scan rather than back into pixels already committed.
+    const dir = leftToRight ? 1 : -1;
 
-    for (let x = start; x !== end; x += step) {
+    for (let x = start; x !== end; x += dir) {
       const i = y * width + x;
       const old = buf[i];
-      const next = old < 128 ? 0 : 255;
+      const next = Math.max(0, Math.min(255, Math.round(old / band) * band));
       gray[i] = next;
 
       const err = old - next;
       if (err === 0) continue;
 
-      const hasAhead = ahead > 0 ? x + 1 < width : x - 1 >= 0;
-      const hasBehind = ahead > 0 ? x - 1 >= 0 : x + 1 < width;
+      const hasAhead = dir > 0 ? x + 1 < width : x - 1 >= 0;
+      const hasBehind = dir > 0 ? x - 1 >= 0 : x + 1 < width;
       const hasBelow = y + 1 < height;
 
-      if (hasAhead) diffuse(i + ahead, err, 7);
+      if (hasAhead) diffuse(i + dir, err, 7);
       if (hasBelow) {
-        if (hasBehind) diffuse(i + width - ahead, err, 3);
+        if (hasBehind) diffuse(i + width - dir, err, 3);
         diffuse(i + width, err, 5);
-        if (hasAhead) diffuse(i + width + ahead, err, 1);
+        if (hasAhead) diffuse(i + width + dir, err, 1);
       }
     }
   }
@@ -109,8 +115,8 @@ const sharpService: LocalImageService<SharpImageServiceConfig> = {
   // service rather than from the component.
   getHTMLAttributes: baseService.getHTMLAttributes,
   getSrcSet: baseService.getSrcSet,
-  // Everything comes out of transform() as a 1-bit PNG, so pin the format up
-  // front or the generated filenames claim .webp/.jpg.
+  // Everything comes out of transform() as a greyscale PNG, so pin the format
+  // up front or the generated filenames claim .webp/.jpg.
   validateOptions(options, config) {
     const validated = baseService.validateOptions?.(options, config) ?? options;
     return { ...validated, format: "png" };
@@ -192,10 +198,6 @@ const sharpService: LocalImageService<SharpImageServiceConfig> = {
     const { data, info } = await result
       .flatten({ background: "#ffffff" })
       .greyscale()
-      // Stretch to the full range first. Error diffusion thresholds hard at
-      // 128, so a low-contrast source would otherwise collapse to a nearly
-      // solid field with no texture at all.
-      .normalise()
       .raw()
       .toBuffer({ resolveWithObject: true });
 
@@ -205,14 +207,14 @@ const sharpService: LocalImageService<SharpImageServiceConfig> = {
       "buffer" in data && data.buffer instanceof SharedArrayBuffer;
     const gray = needsCopy ? new Uint8Array(data) : new Uint8Array(data.buffer, data.byteOffset, data.byteLength);
 
-    dither1Bit(gray, info.width, info.height);
+    dither(gray, info.width, info.height);
 
     const buffer = await sharp(gray, {
       raw: { width: info.width, height: info.height, channels: 1 },
     })
-      // Two-colour palette: the output is literally 1-bit, so this keeps the
-      // files tiny and stops any encoder-side smoothing.
-      .png({ palette: true, colours: 2 })
+      // Indexed to the levels actually used, so the files stay small and the
+      // encoder never reintroduces intermediate shades.
+      .png({ palette: true, colours: LEVELS })
       .toBuffer();
 
     return {

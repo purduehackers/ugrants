@@ -1,19 +1,57 @@
 ---
 import "../styles/global.css";
+
+const description =
+  "grants by purdue hackers to fund your ambitious projects or artworks.";
 ---
 
-<html lang="en">
+<html lang="en" data-view="list" data-chip-view="list">
     <head>
         <meta charset="utf-8" />
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-        <meta name="viewport" content="width=device-width" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="generator" content={Astro.generator} />
         <meta name="darkreader-lock" />
         <title>µgrants</title>
+        <meta name="description" content={description} />
+        <meta property="og:title" content="µgrants" />
+        <meta property="og:description" content={description} />
+        <meta property="og:type" content="website" />
+
+        <link
+            rel="preload"
+            href="/fonts/PolySans-Slim.woff2"
+            as="font"
+            type="font/woff2"
+            crossorigin
+        />
+        <link
+            rel="preload"
+            href="/fonts/geist-mono-latin.woff2"
+            as="font"
+            type="font/woff2"
+            crossorigin
+        />
+        <link
+            rel="preload"
+            href="/fonts/geist-mono-latin-ext.woff2"
+            as="font"
+            type="font/woff2"
+            crossorigin
+        />
+
+        <script is:inline>
+            try {
+                const v = localStorage.getItem("ugrants:view");
+                if (v === "grid" || v === "list") {
+                    const r = document.documentElement;
+                    r.dataset.view = v;
+                    r.dataset.chipView = v;
+                }
+            } catch {}
+        </script>
     </head>
-    <body
-        class="bg-black font-mono text-gray-200 w-screen min-h-screen overflow-x-hidden lg:h-screen lg:overflow-hidden"
-    >
+    <body>
         <slot />
     </body>
 </html>

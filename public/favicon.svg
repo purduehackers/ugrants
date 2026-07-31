@@ -1,10 +1,10 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg width="100%" height="100%" viewBox="0 0 1080 1080" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
-    <rect x="0" y="0" width="1080" height="1080"/>
-    <g transform="matrix(1,0,0,1,-202.55,-357.533)">
-        <g transform="matrix(800,0,0,800,502.511,1094.64)">
-            <path d="M0.496,-0L0.42,-0L0.42,-0.075C0.365,-0.017 0.308,0.012 0.247,0.012C0.221,0.012 0.198,0.008 0.18,-0.001L0.18,0.165L0.104,0.165L0.104,-0.509L0.18,-0.509L0.18,-0.183C0.18,-0.14 0.187,-0.108 0.201,-0.086C0.214,-0.065 0.237,-0.054 0.27,-0.054C0.317,-0.054 0.367,-0.083 0.42,-0.141L0.42,-0.509L0.496,-0.509L0.496,-0Z" style="fill:white;fill-rule:nonzero;"/>
-        </g>
-    </g>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300">
+    <style>
+        rect { fill: #0a0a0a }
+        @media (prefers-color-scheme: dark) { rect { fill: #fafafa } }
+    </style>
+    <!-- AI Generated -->
+    <rect x="100" y="0" width="100" height="200"/>
+    <rect x="200" y="100" width="100" height="200"/>
+    <rect x="0" y="200" width="100" height="100"/>
 </svg>

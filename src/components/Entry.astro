@@ -1,0 +1,81 @@
+---
+import Link from "@components/Link.astro";
+import Sign from "@components/Sign.astro";
+---
+
+<header class="flex flex-col gap-5">
+    <div class="flex flex-col gap-2.5">
+        <div class="enter" style="--i: 0">
+            <div class="flex items-end gap-2 font-mono whitespace-nowrap">
+                <h1
+                    class="flex items-end gap-2 text-[16px] leading-none font-medium tracking-[-0.03em]"
+                >
+                    <a
+                        href="https://purduehackers.com"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="purdue hackers"
+                        data-plain
+                        class="block size-[18px] shrink-0 no-underline transition-transform duration-150 ease-quint active:scale-[0.97]"
+                    >
+                        <Sign />
+                    </a>
+                    <span>µgrants</span>
+                </h1>
+                <p class="text-[14px] leading-none text-muted">
+                    <span aria-hidden="true"
+                        >/ˈmīkrō grants/ <em class="italic">n.</em></span
+                    >
+                    <span class="sr-only">Pronounced my-kroh grants, noun.</span
+                    >
+                </p>
+            </div>
+        </div>
+
+        <div class="flex flex-col gap-2 pl-2 text-muted">
+            <div class="enter" style="--i: 1">
+                <p class="flex gap-3 text-[14px] leading-[1.35]">
+                    <span class="shrink-0 font-mono font-medium text-ink">1</span
+                    >
+                    <span
+                        >grants by <Link href="https://purduehackers.com"
+                            >purdue hackers</Link
+                        > to fund your ambitious projects or artworks</span
+                    >
+                </p>
+            </div>
+            <div class="enter" style="--i: 2">
+                <p class="flex gap-3 text-[14px] leading-[1.35]">
+                    <span class="shrink-0 font-mono font-medium text-ink">2</span
+                    >
+                    <span
+                        >up to $1000 to kickstart a student project at purdue</span
+                    >
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="enter" style="--i: 3">
+        <div role="separator" class="h-px w-full bg-hairline"></div>
+    </div>
+
+    <div class="enter flex flex-col gap-2" style="--i: 4">
+        <p class="text-[14px] leading-[1.35]">
+            purdue hackers is an organization focused on giving students the
+            resources to build within proximity of other talented people
+        </p>
+
+        <p class="text-[14px] leading-[1.35] text-muted">
+            we're actively reviewing grant applications for fall 2026! fill out <Link
+                href="https://phack.rs/grants-form">the intake form</Link
+            >!
+        </p>
+
+        <p class="text-[14px] leading-[1.35] text-muted">
+            want to help us fund <span class="font-mono">µgrants</span>? <Link
+                href="https://x.com/purduehackers">contact us</Link
+            >
+        </p>
+    </div>
+</header>

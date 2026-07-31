@@ -1,0 +1,95 @@
+---
+import type { CollectionEntry } from "astro:content";
+import type { ImageMetadata } from "astro";
+import { Image } from "astro:assets";
+import Authors from "@components/Authors.astro";
+import OptionalLink from "@components/OptionalLink.astro";
+
+interface Props {
+    project: CollectionEntry<"projects">;
+    img: ImageMetadata | undefined;
+    index: number;
+}
+
+const {
+    project: { data },
+    img,
+    index,
+} = Astro.props;
+
+const src = img ?? data.imageUrl;
+---
+
+<figure
+    class="tile enter flex w-[var(--tile)] max-w-full flex-col gap-2"
+    style={`--i: ${Math.min(index, 10) + 6}`}
+>
+    <div class="tile-frame relative w-[var(--tile)] max-w-full border border-hairline">
+        {
+            src ? (
+                <Image
+                    class="w-[var(--tile)] max-w-full"
+                    src={src}
+                    width={232}
+                    height={232}
+                    fit="cover"
+                    alt={data.name}
+                />
+            ) : (
+                <div class="dither-field aspect-square w-[var(--tile)] max-w-full" />
+            )
+        }
+
+        <p class="tile-desc text-[13px] leading-[1.4] text-ink">
+            {data.description}
+        </p>
+    </div>
+
+    <figcaption class="flex min-w-0 flex-col gap-0.5">
+        <span class="truncate text-[14px] leading-[1.35]">
+            <OptionalLink href={data.urls.project}>{data.name}</OptionalLink>
+        </span>
+        <span class="truncate text-[13px] leading-[1.35] text-muted">
+            <Authors authors={data.authors} />
+        </span>
+    </figcaption>
+</figure>
+
+<style>
+    /* Crossfade only, so it never reads as the image still loading. */
+    .tile-desc {
+        position: absolute;
+        inset: 0;
+        overflow: auto;
+        margin: 0;
+        padding: 14px;
+        background: var(--color-page);
+        opacity: 0;
+        filter: blur(3px);
+        pointer-events: none;
+        transition:
+            opacity 100ms var(--ease-quint),
+            filter 100ms var(--ease-quint);
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+        .tile:is(:hover, :has(:focus-visible)) .tile-desc {
+            opacity: 1;
+            filter: blur(0);
+            transition-duration: 160ms;
+        }
+    }
+
+    @media (hover: none) {
+        .tile-desc {
+            display: none;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .tile-desc {
+            filter: none;
+            transition: opacity 100ms linear;
+        }
+    }
+</style>

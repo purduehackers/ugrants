@@ -1,19 +1,15 @@
 ---
-import ProjectShowcase from "@components/ProjectShowcase.astro";
 import Layout from "@layouts/Layout.astro";
-import Blurb from "@components/Blurb.astro";
-import OffsetSign from "@components/OffsetSign.astro";
+import Entry from "@components/Entry.astro";
+import ProjectShowcase from "@components/ProjectShowcase.astro";
 ---
 
 <Layout>
-    <div
-        class="flex flex-col-reverse justify-center gap-16 pt-10 px-4 min-h-screen lg:px-10 lg:flex-row lg:h-screen lg:overflow-hidden"
-    >
-        <OffsetSign hideSmall={false} />
-        <ProjectShowcase />
-        <div class="flex flex-col gap-5 justify-between pb-5 min-w-0 min-h-0 h-full">
-            <Blurb />
-            <OffsetSign hideSmall={true} />
-        </div>
-    </div>
+    <main class="flex min-h-dvh w-full justify-center">
+        <!-- One column, page scrolls. No viewport lock, no inner scroll pane. -->
+        <article class="measure flex flex-col gap-9 pt-20 pb-24 max-sm:pt-10 max-sm:pb-16">
+            <Entry />
+            <ProjectShowcase />
+        </article>
+    </main>
 </Layout>

@@ -1,0 +1,19 @@
+---
+import OptionalLink from "@components/OptionalLink.astro";
+
+interface Props {
+    authors: { name: string; url?: string }[];
+}
+
+const { authors } = Astro.props;
+const last = authors.length - 1;
+---
+
+{
+    authors.map((a, i) => (
+        <>
+            {i > 0 && (i === last ? " & " : ", ")}
+            <OptionalLink href={a.url}>{a.name}</OptionalLink>
+        </>
+    ))
+}

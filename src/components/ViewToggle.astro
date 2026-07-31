@@ -1,0 +1,97 @@
+---
+// Equal-width buttons, so the chip slides on a plain translateX(100%).
+const label =
+    "flex flex-1 cursor-pointer items-center justify-center rounded-chip px-3 py-2 text-muted transition-colors duration-200 ease-quint aria-pressed:text-ink";
+---
+
+<div
+    role="group"
+    aria-label="project view"
+    class="relative isolate flex shrink-0 rounded-track bg-ink/[0.08] p-0.5"
+>
+    <span
+        aria-hidden="true"
+        data-chip
+        class="pointer-events-none absolute inset-y-0.5 left-0.5 -z-10 w-[calc(50%-2px)] rounded-chip bg-page transition-transform duration-200 ease-quint"
+    ></span>
+
+    <button
+        type="button"
+        data-set-view="list"
+        aria-pressed="true"
+        aria-label="list view"
+        class={label}
+    >
+        <svg viewBox="0 0 16 16" class="size-3.5" aria-hidden="true">
+            <rect x="2" y="2" width="12" height="2" fill="currentColor" />
+            <rect x="2" y="7" width="12" height="2" fill="currentColor" />
+            <rect x="2" y="12" width="12" height="2" fill="currentColor" />
+        </svg>
+    </button>
+    <button
+        type="button"
+        data-set-view="grid"
+        aria-pressed="false"
+        aria-label="grid view"
+        class={label}
+    >
+        <svg viewBox="0 0 16 16" class="size-3.5" aria-hidden="true">
+            <rect x="2" y="2" width="5" height="5" fill="currentColor" />
+            <rect x="9" y="2" width="5" height="5" fill="currentColor" />
+            <rect x="2" y="9" width="5" height="5" fill="currentColor" />
+            <rect x="9" y="9" width="5" height="5" fill="currentColor" />
+        </svg>
+    </button>
+</div>
+
+<style>
+    /* data-chip-view: the content swap is delayed, the control is not. */
+    :global(:root[data-chip-view="grid"]) [data-chip] {
+        transform: translateX(100%);
+    }
+</style>
+
+<script>
+    const root = document.documentElement;
+    const projects = document.getElementById("projects");
+    const buttons =
+        document.querySelectorAll<HTMLButtonElement>("[data-set-view]");
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    let timer: ReturnType<typeof setTimeout>;
+
+    function markPressed(view: string) {
+        for (const b of buttons) {
+            b.setAttribute("aria-pressed", String(b.dataset.setView === view));
+        }
+        root.dataset.chipView = view;
+    }
+
+    function setView(view: string) {
+        if (root.dataset.view === view) return;
+
+        try {
+            localStorage.setItem("ugrants:view", view);
+        } catch {}
+
+        markPressed(view);
+
+        if (!projects || reduced.matches) {
+            root.dataset.view = view;
+            return;
+        }
+
+        projects.dataset.swap = "";
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+            root.dataset.view = view;
+            requestAnimationFrame(() => projects.removeAttribute("data-swap"));
+        }, 90);
+    }
+
+    markPressed(root.dataset.view === "grid" ? "grid" : "list");
+
+    for (const b of buttons) {
+        b.addEventListener("click", () => setView(b.dataset.setView!));
+    }
+</script>

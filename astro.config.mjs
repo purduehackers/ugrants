@@ -3,7 +3,6 @@ import { defineConfig } from "astro/config";
 
 import tailwindcss from "@tailwindcss/vite";
 
-import svelte from "@astrojs/svelte";
 
 import vercel from "@astrojs/vercel";
 
@@ -24,7 +23,6 @@ export default defineConfig({
     plugins: [tailwindcss()],
   },
 
-  integrations: [svelte()],
 
   adapter: vercel(),
 });

@@ -1,41 +1,38 @@
 ---
-import { getCollection } from "astro:content";
-import type { CollectionEntry } from "astro:content";
-import type { ImageMetadata } from "astro";
-import Project from "@components/Project.astro";
+import { loadProjects } from "@lib/projects";
+import ProjectRow from "@components/ProjectRow.astro";
+import ProjectTile from "@components/ProjectTile.astro";
+import ViewToggle from "@components/ViewToggle.astro";
 
-const entries = await getCollection("projects");
-
-const images = import.meta.glob<{ default: ImageMetadata }>(
-    "@assets/images/*.{png,jpg,jpeg,gif,svg,webp}",
-);
-
-async function localImage(e: CollectionEntry<"projects">) {
-    if (!e.data.image) return undefined;
-    for (const [k, v] of Object.entries(images)) {
-        if (k.endsWith(e.data.image)) {
-            const module = await v();
-            return module.default;
-        }
-    }
-}
-
-const entriesWithImages = await Promise.all(
-    entries.map(async (project) => ({
-        project,
-        img: await localImage(project),
-    })),
-);
+const entries = await loadProjects();
 ---
 
-<div class="bg-gray-200 text-black overflow-y-auto overflow-x-hidden lg:w-lg">
-    <div class="sticky top-0 bg-gray-200 z-10 pt-4 lg:pt-8">
-        <h2 class="mx-4 text-lg lg:mx-8">recently funded projects</h2>
-        <hr class="my-5 h-1 bg-black lg:my-10" />
+<section class="flex flex-col gap-3" aria-labelledby="funded-heading">
+    <div class="enter flex items-center justify-between gap-4" style="--i: 5">
+        <h2 id="funded-heading" class="text-[14px] leading-none">
+            recently funded
+        </h2>
+        <ViewToggle />
     </div>
-    {
-        entriesWithImages.map(({ project, img }) => (
-            <Project project={project} img={img} />
-        ))
-    }
-</div>
+
+    <div id="projects">
+        <div data-view-list class="flex flex-col">
+            {
+                entries.map(({ project, img }, i) => (
+                    <ProjectRow project={project} img={img} index={i} />
+                ))
+            }
+        </div>
+
+        <div
+            data-view-grid
+            class="grid justify-center gap-4 [grid-template-columns:repeat(auto-fill,var(--tile))]"
+        >
+            {
+                entries.map(({ project, img }, i) => (
+                    <ProjectTile project={project} img={img} index={i} />
+                ))
+            }
+        </div>
+    </div>
+</section>

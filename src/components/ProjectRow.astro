@@ -1,0 +1,253 @@
+---
+import type { CollectionEntry } from "astro:content";
+import type { ImageMetadata } from "astro";
+import { Image } from "astro:assets";
+import Authors from "@components/Authors.astro";
+import OptionalLink from "@components/OptionalLink.astro";
+
+interface Props {
+    project: CollectionEntry<"projects">;
+    img: ImageMetadata | undefined;
+    index: number;
+}
+
+const {
+    project: { data },
+    img,
+    index,
+} = Astro.props;
+
+const src = img ?? data.imageUrl;
+---
+
+<div
+    class="reveal-row enter -mx-3 grid min-h-[40px] items-center gap-x-4 border-b border-hairline px-3 py-2.5 transition-colors duration-150 ease-quint hover:bg-ink/[0.03] sm:grid-cols-[minmax(0,1fr)_auto]"
+    style={`--i: ${Math.min(index, 10) + 6}`}
+>
+    <span class="truncate text-[14px] leading-[1.35]">
+        <OptionalLink href={data.urls.project}>{data.name}</OptionalLink>
+    </span>
+    <span class="truncate text-[13px] leading-[1.35] text-muted sm:text-right">
+        <Authors authors={data.authors} />
+    </span>
+
+    <div class="reveal-card">
+        <div class="card-frame border border-hairline">
+            {
+                src ? (
+                    <Image
+                        class="w-[var(--tile)]"
+                        src={src}
+                        width={232}
+                        height={232}
+                        fit="cover"
+                        alt=""
+                        loading="eager"
+                        fetchpriority="low"
+                    />
+                ) : (
+                    <div class="dither-field aspect-square w-[var(--tile)]" />
+                )
+            }
+        </div>
+        <p class="card-text text-[13px] leading-[1.4] text-ink">
+            {data.description}
+        </p>
+    </div>
+</div>
+
+<style>
+    .reveal-row {
+        position: relative;
+    }
+
+    /* translate and scale stay separate so the per-frame position write
+       does not fight the hover transition. */
+    .reveal-card {
+        position: fixed;
+        top: 0;
+        left: 0;
+        translate: var(--card-x, 0) var(--card-y, 0);
+        z-index: 20;
+        display: flex;
+        width: calc(var(--tile) + 32px);
+        flex-direction: column;
+        gap: 10px;
+        padding: 16px;
+        background: var(--color-page);
+        border: 1px solid var(--color-hairline);
+        border-radius: var(--radius-chip);
+        box-shadow: 0 8px 28px rgb(10 10 10 / 0.1);
+        opacity: 0;
+        scale: 0.97;
+        transform-origin: top left;
+        pointer-events: none;
+
+        --dur: 200ms;
+        --beat: 55ms;
+
+        transition:
+            opacity 120ms var(--ease-quint),
+            scale 120ms var(--ease-quint);
+    }
+
+    .card-frame {
+        flex: none;
+    }
+
+    .card-text {
+        opacity: 0;
+        translate: 0 4px;
+        transition:
+            opacity 120ms var(--ease-quint),
+            translate 120ms var(--ease-quint);
+    }
+
+    :global([data-warm]) .reveal-card {
+        --dur: 110ms;
+        --beat: 25ms;
+    }
+
+    .reveal-row:is(:hover, :has(:focus-visible)) .reveal-card {
+        opacity: 1;
+        scale: 1;
+        transition-duration: var(--dur);
+    }
+
+    .reveal-row:is(:hover, :has(:focus-visible)) .card-text {
+        opacity: 1;
+        translate: 0 0;
+        transition-duration: var(--dur);
+        transition-delay: var(--beat);
+    }
+
+    @media (hover: none) {
+        .reveal-card {
+            position: static;
+            grid-column: 1 / -1;
+            width: auto;
+            padding: 6px 0 0;
+            border: 0;
+            background: none;
+            box-shadow: none;
+            opacity: 1;
+            translate: none;
+            scale: none;
+            pointer-events: auto;
+        }
+
+        .card-frame {
+            display: none;
+        }
+
+        .card-text {
+            opacity: 1;
+            translate: none;
+            color: var(--color-muted);
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .reveal-card,
+        .reveal-row:is(:hover, :has(:focus-visible)) .reveal-card {
+            scale: 1;
+            transition: opacity 120ms linear;
+        }
+
+        .card-text,
+        .reveal-row:is(:hover, :has(:focus-visible)) .card-text {
+            translate: none;
+            transition: opacity 120ms linear;
+            transition-delay: 0ms;
+        }
+    }
+</style>
+
+<script>
+    const list = document.querySelector<HTMLElement>("[data-view-list]");
+
+    if (list) {
+        const PAD = 16;
+        const OFFSET = 36;
+        // Trailing rather than 1:1: lets it settle when you stop moving.
+        const EASE = window.matchMedia("(prefers-reduced-motion: reduce)")
+            .matches
+            ? 1
+            : 0.22;
+
+        let card: HTMLElement | null = null;
+        let w = 0;
+        let h = 0;
+        let tx = 0;
+        let ty = 0;
+        let cx = 0;
+        let cy = 0;
+        let raf = 0;
+        let cool: ReturnType<typeof setTimeout>;
+
+        function target(x: number, y: number) {
+            let left = x + OFFSET;
+            if (left + w + PAD > innerWidth) left = x - OFFSET - w;
+            tx = Math.max(PAD, Math.min(left, innerWidth - w - PAD));
+
+            // Half the viewport tall, so offsetting below the pointer just
+            // pins to the bottom clamp. Glide the full range instead.
+            const maxTop = innerHeight - h - PAD;
+            ty =
+                maxTop <= PAD
+                    ? PAD
+                    : PAD + (y / innerHeight) * (maxTop - PAD);
+        }
+
+        function write() {
+            card!.style.setProperty("--card-x", `${Math.round(cx)}px`);
+            card!.style.setProperty("--card-y", `${Math.round(cy)}px`);
+        }
+
+        function step() {
+            if (!card) {
+                raf = 0;
+                return;
+            }
+            cx += (tx - cx) * EASE;
+            cy += (ty - cy) * EASE;
+            write();
+            raf = requestAnimationFrame(step);
+        }
+
+        function open(row: HTMLElement, x: number, y: number) {
+            card = row.querySelector<HTMLElement>(".reveal-card");
+            if (!card) return;
+
+            w = card.offsetWidth;
+            h = card.offsetHeight;
+            target(x, y);
+            cx = tx;
+            cy = ty;
+            write();
+
+            clearTimeout(cool);
+            list!.setAttribute("data-warm", "");
+            if (!raf) raf = requestAnimationFrame(step);
+        }
+
+        for (const row of list.querySelectorAll<HTMLElement>(".reveal-row")) {
+            row.addEventListener("pointerenter", (e) =>
+                open(row, e.clientX, e.clientY),
+            );
+            row.addEventListener("focusin", () => {
+                const r = row.getBoundingClientRect();
+                open(row, r.left + 24, r.bottom);
+            });
+        }
+
+        list.addEventListener("pointermove", (e) => {
+            if (card) target(e.clientX, e.clientY);
+        });
+
+        list.addEventListener("pointerleave", () => {
+            card = null;
+            cool = setTimeout(() => list.removeAttribute("data-warm"), 400);
+        });
+    }
+</script>

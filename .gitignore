@@ -20,3 +20,8 @@ bun-debug.log*
 # jetbrains setting folder
 .idea/
 .vercel/
+
+# agent tooling
+.agents/
+.claude/
+skills-lock.json

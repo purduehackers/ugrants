@@ -57,19 +57,14 @@ const fitMap: Record<ImageFit, keyof FitEnum> = {
 const LEVELS = 8;
 
 /**
- * Floyd–Steinberg error diffusion down to LEVELS shades of grey.
- *
- * Serpentine scan (alternating row direction) rather than always
- * left-to-right: a single direction accumulates error toward one edge and
- * leaves visible diagonal banding in flat areas like skies.
- *
- * Operates on a single-channel 8-bit greyscale buffer, in place.
+ * Floyd–Steinberg error diffusion down to LEVELS greys, in place, on a
+ * single-channel buffer. Serpentine scan: always going left-to-right piles
+ * error against one edge and bands visibly in flat areas like skies.
  */
 function dither(gray: Uint8Array, width: number, height: number) {
   const band = 255 / (LEVELS - 1);
 
-  // Error is fractional and routinely runs outside 0–255, so it needs its own
-  // float buffer; quantising into the Uint8Array as we go would clip it.
+  // Error is fractional and runs outside 0-255, so it needs a float buffer.
   const buf = new Float32Array(gray.length);
   for (let i = 0; i < gray.length; i++) buf[i] = gray[i];
 
@@ -81,8 +76,7 @@ function dither(gray: Uint8Array, width: number, height: number) {
     const leftToRight = y % 2 === 0;
     const start = leftToRight ? 0 : width - 1;
     const end = leftToRight ? width : -1;
-    // Mirror the kernel when we reverse, so error always travels ahead of the
-    // scan rather than back into pixels already committed.
+    // Mirrored on reverse rows so error always travels ahead of the scan.
     const dir = leftToRight ? 1 : -1;
 
     for (let x = start; x !== end; x += dir) {
@@ -111,13 +105,11 @@ function dither(gray: Uint8Array, width: number, height: number) {
 const sharpService: LocalImageService<SharpImageServiceConfig> = {
   parseURL: baseService.parseURL,
   getURL: baseService.getURL,
-  // Without these the <img> ships with nothing but src: no class, alt,
-  // width/height or loading, because Astro emits attributes through the
-  // service rather than from the component.
+  // Without these the <img> ships with nothing but src: Astro emits img
+  // attributes through the service, not the component.
   getHTMLAttributes: baseService.getHTMLAttributes,
   getSrcSet: baseService.getSrcSet,
-  // Everything comes out of transform() as a greyscale PNG, so pin the format
-  // up front or the generated filenames claim .webp/.jpg.
+  // Output is always PNG, so pin it or filenames claim .webp/.jpg.
   validateOptions(options, config) {
     const validated = baseService.validateOptions?.(options, config) ?? options;
     return { ...validated, format: "png" };
@@ -174,8 +166,7 @@ const sharpService: LocalImageService<SharpImageServiceConfig> = {
       });
     }
 
-    // Animated GIFs can't be dithered frame-wise here without desyncing the
-    // palette between frames, so they keep the normal encode path.
+    // GIFs keep the normal path: per-frame dithering desyncs the palette.
     if (isGifInput) {
       let quality: number | string | undefined = undefined;
       if (transform.quality) {
@@ -194,8 +185,7 @@ const sharpService: LocalImageService<SharpImageServiceConfig> = {
       return { data: await result.toBuffer(), format: "webp" };
     }
 
-    // Flatten onto white before desaturating: the page ground is near-white,
-    // so transparent regions should dither as paper, not as black.
+    // Flatten onto white so transparency dithers as paper, not black.
     const { data, info } = await result
       .flatten({ background: "#ffffff" })
       .greyscale()
@@ -213,9 +203,8 @@ const sharpService: LocalImageService<SharpImageServiceConfig> = {
     const buffer = await sharp(gray, {
       raw: { width: info.width, height: info.height, channels: 1 },
     })
-      // libimagequant runs its own lossy pass, so it needs headroom above the
-      // levels actually used or it merges them (asking for exactly 8 yields
-      // 4), and its dithering has to be off or it re-dithers the dither.
+      // libimagequant needs headroom or it merges bands (asking for exactly
+      // 8 yields 4), and its own dithering must be off.
       .png({ palette: true, colours: Math.min(256, LEVELS * 2), dither: 0 })
       .toBuffer();
 

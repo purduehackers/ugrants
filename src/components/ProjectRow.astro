@@ -38,8 +38,8 @@ const src = img ?? data.imageUrl;
                     <Image
                         class="w-[var(--tile)]"
                         src={src}
-                        width={248}
-                        height={248}
+                        width={232}
+                        height={232}
                         fit="cover"
                         alt=""
                         loading="eager"
@@ -63,7 +63,6 @@ const src = img ?? data.imageUrl;
 
     .reveal-card {
         position: absolute;
-        /* Set by script so the whole card stays inside the viewport. */
         top: var(--card-top, -8px);
         left: calc(100% + 20px);
         z-index: 20;
@@ -84,15 +83,18 @@ const src = img ?? data.imageUrl;
         --dur: 200ms;
         --beat: 55ms;
 
-        /* Exit is uniform and faster than enter: the user has already moved
-           on, so it should get out of the way. */
+        /* Exit faster than enter: the user has already moved on. */
         transition:
             opacity 120ms var(--ease-quint),
             transform 120ms var(--ease-quint);
     }
 
-    /* The image gets no reveal of its own. Anything directional on a photo
-       reads as a progressive download rather than as intent. */
+    .card-frame {
+        flex: none;
+    }
+
+    /* No reveal of its own: anything directional on a photo reads as a
+       progressive download rather than as intent. */
     .card-text {
         opacity: 0;
         transform: translateY(4px);
@@ -101,8 +103,7 @@ const src = img ?? data.imageUrl;
             transform 120ms var(--ease-quint);
     }
 
-    /* Second card onward in a sweep: same beats, roughly half the time, so it
-       still reads as motion without making a deliberate scan feel slow. */
+    /* Second card onward in a sweep runs at about half the time. */
     :global([data-warm]) .reveal-card {
         --dur: 110ms;
         --beat: 25ms;
@@ -121,30 +122,25 @@ const src = img ?? data.imageUrl;
         transition-delay: var(--beat);
     }
 
-    /* No gutter left to park the card in, so it has to sit over the column.
-       Drop the image and span the width instead: a short strip of text under
-       the row covers far less of the list than a 400px card floating on it,
-       and the script anchors it below the row rather than across it. */
-    @media (max-width: 1200px) {
-        .reveal-card {
-            left: 0;
-            right: 0;
-            width: auto;
-            transform: scale(0.99) translateY(-4px);
-            transform-origin: top center;
-        }
-
-        .card-frame {
-            display: none;
-        }
-
-        .reveal-row:is(:hover, :has(:focus-visible)) .reveal-card {
-            transform: scale(1) translateY(0);
-        }
+    /* Too little gutter to park it beside the column, so it goes under the row
+       and turns horizontal, which keeps the image but halves the height. */
+    :global([data-card="below"]) .reveal-card {
+        left: 0;
+        right: 0;
+        width: auto;
+        flex-direction: row;
+        align-items: flex-start;
+        transform: scale(0.99) translateY(-4px);
+        transform-origin: top center;
     }
 
-    /* No hover to reveal anything, so the description is simply part of the
-       row. The image stays out: that is what grid view is for. */
+    :global([data-card="below"])
+        .reveal-row:is(:hover, :has(:focus-visible))
+        .reveal-card {
+        transform: scale(1) translateY(0);
+    }
+
+    /* Nothing to hover, so the description is simply part of the row. */
     @media (hover: none) {
         .reveal-card {
             position: static;
@@ -152,7 +148,6 @@ const src = img ?? data.imageUrl;
             width: auto;
             padding: 6px 0 0;
             border: 0;
-            border-radius: 0;
             background: none;
             box-shadow: none;
             opacity: 1;
@@ -192,19 +187,29 @@ const src = img ?? data.imageUrl;
 
     if (list) {
         const GAP = 16;
+        const tile =
+            parseFloat(
+                getComputedStyle(document.documentElement).getPropertyValue(
+                    "--tile",
+                ),
+            ) || 232;
+        // Card plus its 20px offset and a margin, measured against real free
+        // space rather than a guessed breakpoint.
+        const NEEDED = tile + 32 + 20 + GAP;
+
         let active: HTMLElement | null = null;
         let cool: ReturnType<typeof setTimeout>;
 
-        // Cards are taller than a row, so the last ones would hang off the
-        // bottom. Clamp instead of flipping: a flip would jump the card from
-        // below to above between two adjacent rows.
         function place(row: HTMLElement) {
             const card = row.querySelector<HTMLElement>(".reveal-card");
             if (!card) return;
-            const rect = row.getBoundingClientRect();
-            // Beside the row when there is room for it, otherwise below, so
-            // the row being pointed at never ends up underneath the card.
-            const beside = window.innerWidth > 1200;
+
+            let rect = row.getBoundingClientRect();
+            const beside = window.innerWidth - rect.right >= NEEDED;
+            list!.dataset.card = beside ? "beside" : "below";
+
+            // Re-read: the mode above changes the card's own size.
+            rect = row.getBoundingClientRect();
             const want = beside ? rect.top - 8 : rect.bottom + 6;
             const max = window.innerHeight - card.offsetHeight - GAP;
             const top = Math.max(GAP, Math.min(want, max));
@@ -228,8 +233,7 @@ const src = img ?? data.imageUrl;
             cool = setTimeout(() => list.removeAttribute("data-warm"), 400);
         });
 
-        // place() reads layout, so running it raw on every scroll event forces
-        // a synchronous reflow per frame. Coalesce to one per paint.
+        // place() reads layout, so coalesce to one call per paint.
         let queued = false;
         function reflow() {
             if (!active || queued) return;

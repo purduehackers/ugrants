@@ -1,8 +1,6 @@
 ---
-// Both buttons hold the same 14px icon at the same padding, so the halves are
-// equal and the chip slides on a plain translateX(100%) with no measurement.
-// Filled rects rather than strokes: they echo the sign, and hold up better
-// than hairlines at this size.
+// Equal-width buttons, so the chip slides on a plain translateX(100%) with no
+// measurement. Filled rects echo the sign and hold up better than hairlines.
 const label =
     "flex flex-1 cursor-pointer items-center justify-center rounded-chip px-3 py-2 text-muted transition-colors duration-200 ease-quint aria-pressed:text-ink";
 ---
@@ -48,8 +46,8 @@ const label =
 </div>
 
 <style>
-    /* data-chip-view, not data-view: the content swap is delayed to let the
-       crossfade run, but the control has to respond on the press frame. */
+    /* data-chip-view, not data-view: the content swap is delayed for the
+       crossfade, but the control must respond on the press frame. */
     :global(:root[data-chip-view="grid"]) [data-chip] {
         transform: translateX(100%);
     }
@@ -93,7 +91,6 @@ const label =
         }, 90);
     }
 
-    // The pre-paint script may have already restored "grid".
     markPressed(root.dataset.view === "grid" ? "grid" : "list");
 
     for (const b of buttons) {

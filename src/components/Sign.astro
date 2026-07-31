@@ -1,7 +1,6 @@
 ---
-// Publishes the current lightning-time colours as :root variables. The sign
-// paints itself from them and links tint their underline from the same
-// source, so there is one owner of the colour.
+// Publishes lightning-time colours as :root variables. The sign and the link
+// tints both read them, so there is one owner of the colour.
 ---
 
 <svg
@@ -22,9 +21,8 @@
 
     const root = document.documentElement;
 
-    // Deliberately off canonical. Most channels already sit on the sRGB edge,
-    // so HSL cannot push them further; trading a little OKLCH lightness buys
-    // real chroma instead.
+    // Off canonical on purpose. Most channels already sit on the sRGB edge,
+    // so trading OKLCH lightness is the only way to buy chroma.
     const L_MUL = 0.97;
     const C_MUL = 1.3;
 
@@ -71,7 +69,7 @@
         );
     }
 
-    // Only 16 values per channel exist, so every result is a repeat.
+    // Only 16 values per channel exist, so every result repeats.
     const cache = new Map<string, string>();
     const tinted = (hex: string) => {
         let v = cache.get(hex);
@@ -86,9 +84,8 @@
         const { boltColor, zapColor, sparkColor } =
             lt.convertToLightning(new Date()).colors;
         const next = boltColor + zapColor + sparkColor;
-        // These are inherited custom properties on the root, so writing them
-        // restyles the whole tree. The finest channel only moves every ~21s,
-        // so bail on the twenty ticks in between.
+        // Root custom properties are inherited, so writing them restyles the
+        // whole tree. The finest channel only moves every ~21s.
         if (next === last) return;
         last = next;
 
@@ -100,8 +97,7 @@
     tick();
     setInterval(tick, 1000);
 
-    // Links take one channel each, cycling in document order, so the set of
-    // them reads like the sign rather than one flat accent.
+    // One channel each, cycling, so links read like the sign.
     const channels = ["--bolt", "--zap", "--spark"];
     document
         .querySelectorAll<HTMLElement>("a:not([data-plain])")

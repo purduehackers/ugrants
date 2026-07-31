@@ -30,8 +30,8 @@ const src = img ?? data.imageUrl;
                 <Image
                     class="w-[var(--tile)] max-w-full"
                     src={src}
-                    width={248}
-                    height={248}
+                    width={232}
+                    height={232}
                     fit="cover"
                     alt={data.name}
                 />
@@ -56,9 +56,8 @@ const src = img ?? data.imageUrl;
 </figure>
 
 <style>
-    /* Covers the image rather than floating beside it: a popover per tile
-       would put eight overlapping surfaces on one grid. Crossfade only, no
-       movement, so it never reads as the image still loading. */
+    /* Covers the image rather than floating: eight popovers on one grid
+       would collide. Crossfade only, so it never reads as still loading. */
     .tile-desc {
         position: absolute;
         inset: 0;
@@ -82,8 +81,6 @@ const src = img ?? data.imageUrl;
         }
     }
 
-    /* Nothing to hover, and the list view already shows descriptions inline
-       on touch. */
     @media (hover: none) {
         .tile-desc {
             display: none;

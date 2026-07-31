@@ -8,8 +8,7 @@
     src: url("/fonts/PolySans-Slim.woff2") format("woff2");
 }
 
-/* Geist Mono, latin + latin-ext. Carries the wordmark line (µ ˈ ī) and the
-   numeric column; PolySans has none of those glyphs. */
+/* Geist Mono carries µ ˈ ī, which PolySans lacks. */
 @font-face {
     font-family: "Geist Mono";
     font-style: normal;
@@ -50,10 +49,9 @@
 
     --ease-quint: cubic-bezier(0.2, 0, 0, 1);
 
-    --measure: 512px;
-    /* Two up inside the measure, 16px gutter. Tiles render 1:1, so this has
-       to stay in step with the width passed to <Image>. */
-    --tile: 248px;
+    /* Tiles render 1:1, so --tile must match the width passed to <Image>. */
+    --measure: 480px;
+    --tile: 232px;
 }
 
 @layer base {
@@ -87,12 +85,10 @@
         text-decoration-line: underline;
         text-decoration-thickness: 1px;
         text-underline-offset: 3px;
-        /* Tinted from the sign's lightning time. Never carries the text
-           itself: these colours run as low as 1.2:1 on this ground, so the
-           highlight below stays a wash under ink rather than a text colour. */
+        /* Underline only. These run as low as 1.2:1 on this ground, so the
+           hover stays a wash under ink rather than a text colour. */
         text-decoration-color: var(--link, var(--color-rule));
-        /* Negative margin cancels the padding, so the highlight grows outward
-           without nudging text out of line with unlinked rows. */
+        /* Negative margin cancels the padding so text stays aligned. */
         padding-inline: 3px;
         margin-inline: -3px;
         border-radius: 0;
@@ -151,9 +147,8 @@
     }
 }
 
-/* backwards, not both: `both` leaves the final keyframe applied forever, and
-   a lingering filter (even blur(0)) makes every row a stacking context, which
-   traps the hovercard's z-index inside its own row. */
+/* backwards, not both: a lingering filter would make every row a stacking
+   context and trap the hovercard's z-index inside its own row. */
 @utility enter {
     animation: ug-enter 300ms var(--ease-quint) backwards;
     animation-delay: calc(var(--i, 0) * 40ms);

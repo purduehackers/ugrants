@@ -58,7 +58,7 @@
     "name": "Qter Robot",
     "authors": [
       { "name": "Arhan Chaudhary", "url": "https://arhan.sh" },
-      { "name": "Henry Rovnyak" }
+      { "name": "Henry Rovnyak", "url": "https://rovnyak.net/" }
     ],
     "urls": {
       "project": "https://qter.dev"

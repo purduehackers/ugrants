@@ -21,15 +21,19 @@ const src = img ?? data.imageUrl;
 ---
 
 <div
-    class="reveal-row enter -mx-3 grid items-baseline gap-x-4 border-b border-hairline px-3 py-3 transition-colors duration-150 ease-quint hover:bg-ink/[0.03] sm:grid-cols-[minmax(0,1fr)_auto]"
+    class="reveal-row enter -mx-3 border-b border-hairline px-3 py-3 transition-colors duration-150 ease-quint hover:bg-ink/[0.03]"
     style={`--i: ${Math.min(index, 10) + 6}`}
 >
-    <span class="truncate text-[14px] leading-[1.35]">
-        <OptionalLink href={data.urls.project}>{data.name}</OptionalLink>
-    </span>
-    <span class="truncate text-[13px] leading-[1.35] text-muted sm:text-right">
-        <Authors authors={data.authors} />
-    </span>
+    <div class="flex items-baseline gap-4 max-sm:flex-col max-sm:gap-1 sm:justify-between">
+        <span class="whitespace-nowrap text-[14px] leading-[1.35]">
+            <OptionalLink href={data.urls.project}>{data.name}</OptionalLink>
+        </span>
+        <span
+            class="whitespace-nowrap text-[13px] leading-[1.35] text-muted sm:text-right"
+        >
+            <Authors authors={data.authors} />
+        </span>
+    </div>
 
     <div class="reveal-card">
         <div class="card-frame border border-hairline">
@@ -61,8 +65,6 @@ const src = img ?? data.imageUrl;
         position: relative;
     }
 
-    /* translate and scale stay separate so the per-frame position write
-       does not fight the hover transition. */
     .reveal-card {
         position: fixed;
         top: 0;
@@ -169,7 +171,6 @@ const src = img ?? data.imageUrl;
     if (list) {
         const PAD = 16;
         const OFFSET = 36;
-        // Trailing rather than 1:1: lets it settle when you stop moving.
         const EASE = window.matchMedia("(prefers-reduced-motion: reduce)")
             .matches
             ? 1
@@ -190,8 +191,6 @@ const src = img ?? data.imageUrl;
             if (left + w + PAD > innerWidth) left = x - OFFSET - w;
             tx = Math.max(PAD, Math.min(left, innerWidth - w - PAD));
 
-            // Half the viewport tall, so offsetting below the pointer just
-            // pins to the bottom clamp. Glide the full range instead.
             const maxTop = innerHeight - h - PAD;
             ty =
                 maxTop <= PAD

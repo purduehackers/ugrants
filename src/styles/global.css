@@ -157,8 +157,11 @@
     }
 }
 
+/* backwards, not both: `both` leaves the final keyframe applied forever, and
+   a lingering filter (even blur(0)) makes every row a stacking context, which
+   traps the hovercard's z-index inside its own row. */
 @utility enter {
-    animation: ug-enter 300ms var(--ease-quint) both;
+    animation: ug-enter 300ms var(--ease-quint) backwards;
     animation-delay: calc(var(--i, 0) * 40ms);
 }
 

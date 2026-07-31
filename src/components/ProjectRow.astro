@@ -1,0 +1,58 @@
+---
+import type { CollectionEntry } from "astro:content";
+import type { ImageMetadata } from "astro";
+import { Image } from "astro:assets";
+import Authors from "@components/Authors.astro";
+import OptionalLink from "@components/OptionalLink.astro";
+
+interface Props {
+    project: CollectionEntry<"projects">;
+    img: ImageMetadata | undefined;
+    index: number;
+}
+
+const {
+    project: { data },
+    img,
+    index,
+} = Astro.props;
+
+const src = img ?? data.imageUrl;
+const ordinal = String(index + 1).padStart(2, "0");
+---
+
+<div
+    class="enter -mx-3 grid grid-cols-[minmax(0,1fr)_56px] items-center gap-x-3 border-b border-hairline px-3 py-2.5 transition-colors duration-150 ease-quint hover:bg-ink/[0.03] sm:min-h-[50px] sm:grid-cols-[minmax(0,1fr)_304px_56px]"
+    style={`--i: ${Math.min(index, 10) + 6}`}
+>
+    <div class="flex min-w-0 flex-col gap-0.5">
+        <span class="truncate text-[14px] leading-[1.35] font-semibold">
+            <OptionalLink href={data.urls.project}>{data.name}</OptionalLink>
+        </span>
+        <span class="truncate text-[13px] leading-[1.35] text-muted">
+            <Authors authors={data.authors} />
+        </span>
+    </div>
+
+    <div class="hidden h-8 w-[304px] sm:block" aria-hidden="true">
+        {
+            src ? (
+                <Image
+                    class="dithered h-8 w-[304px]"
+                    src={src}
+                    width={304}
+                    height={32}
+                    fit="cover"
+                    alt=""
+                />
+            ) : (
+                <div class="dither-field h-8 w-[304px]" />
+            )
+        }
+    </div>
+
+    <span
+        class="self-start pt-0.5 text-right font-mono text-[13px] leading-[1.35] tabular-nums text-muted sm:self-center sm:pt-0"
+        >{ordinal}</span
+    >
+</div>

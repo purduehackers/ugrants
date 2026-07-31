@@ -1,0 +1,82 @@
+---
+// Both labels are four characters wide, so the halves are equal and the chip
+// slides on a plain translateX(100%) with no measurement.
+const label =
+    "flex-1 cursor-pointer rounded-chip px-3 py-1.5 text-center text-[13px] leading-none whitespace-nowrap text-muted transition-colors duration-200 ease-quint aria-pressed:font-semibold aria-pressed:text-ink";
+---
+
+<div
+    role="group"
+    aria-label="project view"
+    class="relative isolate flex shrink-0 rounded-track bg-ink/[0.08] p-0.5"
+>
+    <span
+        aria-hidden="true"
+        data-chip
+        class="pointer-events-none absolute inset-y-0.5 left-0.5 -z-10 w-[calc(50%-2px)] rounded-chip bg-page transition-transform duration-200 ease-quint"
+    ></span>
+
+    <button type="button" data-set-view="list" aria-pressed="true" class={label}
+        >list</button
+    >
+    <button
+        type="button"
+        data-set-view="grid"
+        aria-pressed="false"
+        class={label}>grid</button
+    >
+</div>
+
+<style>
+    /* data-chip-view, not data-view: the content swap is delayed to let the
+       crossfade run, but the control has to respond on the press frame. */
+    :global(:root[data-chip-view="grid"]) [data-chip] {
+        transform: translateX(100%);
+    }
+</style>
+
+<script>
+    const root = document.documentElement;
+    const projects = document.getElementById("projects");
+    const buttons =
+        document.querySelectorAll<HTMLButtonElement>("[data-set-view]");
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    let timer: ReturnType<typeof setTimeout>;
+
+    function markPressed(view: string) {
+        for (const b of buttons) {
+            b.setAttribute("aria-pressed", String(b.dataset.setView === view));
+        }
+        root.dataset.chipView = view;
+    }
+
+    function setView(view: string) {
+        if (root.dataset.view === view) return;
+
+        try {
+            localStorage.setItem("ugrants:view", view);
+        } catch {}
+
+        markPressed(view);
+
+        if (!projects || reduced.matches) {
+            root.dataset.view = view;
+            return;
+        }
+
+        projects.dataset.swap = "";
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+            root.dataset.view = view;
+            requestAnimationFrame(() => projects.removeAttribute("data-swap"));
+        }, 90);
+    }
+
+    // The pre-paint script may have already restored "grid".
+    markPressed(root.dataset.view === "grid" ? "grid" : "list");
+
+    for (const b of buttons) {
+        b.addEventListener("click", () => setView(b.dataset.setView!));
+    }
+</script>

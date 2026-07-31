@@ -3,7 +3,7 @@
     "id": "notebooks",
     "image": "notebooks.png",
     "name": "Mini Notebooks",
-    "author": "Alex Kilmer",
+    "authors": [{ "name": "Alex Kilmer" }],
     "urls": {},
     "description": "Small notebooks with custom-patterned pages for many different uses."
   },
@@ -11,17 +11,18 @@
     "id": "chair",
     "image": "chair.png",
     "name": "Game Controller Chair",
-    "author": "Alexander Kutulas & Benjamin Taylor",
-    "urls": {
-      "author": "https://xanmankey.itch.io"
-    },
+    "authors": [
+      { "name": "Alexander Kutulas", "url": "https://xanmankey.itch.io" },
+      { "name": "Benjamin Taylor" }
+    ],
+    "urls": {},
     "description": "A chair - that is also a game controller! Built from Scratch at the Bechtel Innovation Design Center - we promise it won't kill you!"
   },
   {
     "id": "wwlb",
     "image": "wwlb.webp",
     "name": "What Was Left Behind",
-    "author": "Keith",
+    "authors": [{ "name": "Keith" }],
     "urls": {},
     "description": "An experimental art installation featuring dressed mannequins, the liminal veil, and a story told without words for those who look deeper."
   },
@@ -29,7 +30,7 @@
     "id": "poas",
     "image": "poas.webp",
     "name": "Portraits of a Star",
-    "author": "Jonathan Wang",
+    "authors": [{ "name": "Jonathan Wang" }],
     "urls": {},
     "description": "A grid of paintings featuring original character Asteryski, with a four-pointed star forming across the paintings."
   },
@@ -37,29 +38,29 @@
     "id": "2048",
     "image": "2048.webp",
     "name": "2048 AI",
-    "author": "Angela Qian",
-    "urls": {
-      "author": "https://angelazqian.github.io/"
-    },
+    "authors": [
+      { "name": "Angela Qian", "url": "https://angelazqian.github.io/" }
+    ],
+    "urls": {},
     "description": "A neural network trained off human games to play 2048. It was displayed as a retro-style interactive exhibit using a CRT monitor and an old school joystick, where visitors could actively \"sabotage\" the game and watch the bot attempt to recover."
   },
   {
     "id": "beacons",
     "image": "beacon.webp",
     "name": "Beacons",
-    "author": "Jack Hogan",
-    "urls": {
-      "author": "https://jackhogan.me"
-    },
+    "authors": [{ "name": "Jack Hogan", "url": "https://jackhogan.me" }],
+    "urls": {},
     "description": "Social devices to make warm introductions and bring the party to you."
   },
   {
     "id": "qter",
     "image": "qter.webp",
     "name": "Qter Robot",
-    "author": "Arhan Chaudhary & Henry Rovnyak",
+    "authors": [
+      { "name": "Arhan Chaudhary", "url": "https://arhan.sh" },
+      { "name": "Henry Rovnyak" }
+    ],
     "urls": {
-      "author": "https://arhan.sh",
       "project": "https://qter.dev"
     },
     "description": "A computer architecture that allows humans to perform computations by manipulating the Rubik's Cube by hand with a robot to do the hard work for you."
@@ -68,9 +69,8 @@
     "id": "sign",
     "image": "sign.jpg",
     "name": "The Sign",
-    "author": "Jack Hogan",
+    "authors": [{ "name": "Jack Hogan", "url": "https://jackhogan.me" }],
     "urls": {
-      "author": "https://jackhogan.me",
       "project": "https://blog.purduehackers.com/posts/sign"
     },
     "description": "A meter-tall Conway glider that lights up according to a color representation of the current time."

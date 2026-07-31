@@ -1,0 +1,91 @@
+---
+import Link from "@components/Link.astro";
+import Sign from "@components/Sign.svelte";
+---
+
+<header class="flex flex-col gap-5">
+    <div class="flex flex-col gap-2.5">
+        <div class="enter" style="--i: 0">
+            <div class="flex items-end gap-2 font-mono whitespace-nowrap">
+                <h1
+                    class="flex items-end gap-1.5 text-[16px] leading-none font-medium tracking-[-0.03em]"
+                >
+                    <span class="block size-[18px] shrink-0">
+                        <Sign client:load />
+                    </span>
+                    <span>µgrants</span>
+                </h1>
+                <p class="text-[14px] leading-none text-muted">
+                    <span aria-hidden="true"
+                        >/ˈmīkrō grants/ <em class="italic">n.</em></span
+                    >
+                    <span class="sr-only">Pronounced my-kroh grants, noun.</span
+                    >
+                </p>
+            </div>
+        </div>
+
+        <div class="flex flex-col gap-2 pl-2 text-muted">
+            <div class="enter" style="--i: 1">
+                <p class="text-[14px] leading-[1.35]">
+                    <span class="font-mono font-medium text-ink">1</span>
+                    grants by <Link href="https://purduehackers.com"
+                        >purdue hackers</Link
+                    > to fund your ambitious projects or artworks
+                </p>
+            </div>
+            <div class="enter" style="--i: 2">
+                <p class="text-[14px] leading-[1.35]">
+                    <span class="font-mono font-medium text-ink">2</span>
+                    purdue hackers is an organization focused on giving students
+                    the resources to build within proximity of other talented people
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="enter" style="--i: 3">
+        <div role="separator" class="rule-dither w-full"></div>
+    </div>
+
+    <div class="enter flex flex-col gap-3" style="--i: 4">
+        <div class="flex flex-wrap items-center gap-x-3 gap-y-2">
+            <p class="text-[14px] leading-[1.35]">
+                we're actively reviewing applications for fall 2026.
+            </p>
+            <a
+                href="https://phack.rs/grants-form"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex min-h-9 items-center gap-1.5 rounded-chip bg-ink/[0.055] px-3 text-[14px] leading-none font-semibold no-underline transition-[background-color,transform] duration-150 ease-quint hover:bg-ink/[0.09] active:scale-[0.97]"
+            >
+                apply
+                <svg
+                    aria-hidden="true"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    class="size-3.5 shrink-0 text-muted"
+                >
+                    <path
+                        d="M14 5.75 20.25 12 14 18.25"
+                        stroke="currentColor"
+                        stroke-width="1.75"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"></path>
+                    <path
+                        d="M19.5 12H3.75"
+                        stroke="currentColor"
+                        stroke-width="1.75"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"></path>
+                </svg>
+            </a>
+        </div>
+
+        <p class="text-[14px] leading-[1.35] text-muted">
+            want to help us fund <span class="font-mono">µgrants</span>? <Link
+                href="https://x.com/purduehackers">contact us</Link
+            >
+        </p>
+    </div>
+</header>

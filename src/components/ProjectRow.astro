@@ -61,12 +61,13 @@ const src = img ?? data.imageUrl;
         position: relative;
     }
 
-    /* Fixed and pinned to the pointer, placed once on enter so it does not
-       slide around while it is being read. */
+    /* Follows the pointer. translate and scale are separate properties so the
+       per-frame position write never fights the hover transition. */
     .reveal-card {
         position: fixed;
-        top: var(--card-y, 0);
-        left: var(--card-x, 0);
+        top: 0;
+        left: 0;
+        translate: var(--card-x, 0) var(--card-y, 0);
         z-index: 20;
         display: flex;
         width: calc(var(--tile) + 32px);
@@ -78,7 +79,7 @@ const src = img ?? data.imageUrl;
         border-radius: var(--radius-chip);
         box-shadow: 0 8px 28px rgb(10 10 10 / 0.1);
         opacity: 0;
-        transform: scale(0.97);
+        scale: 0.97;
         transform-origin: top left;
         pointer-events: none;
 
@@ -88,7 +89,7 @@ const src = img ?? data.imageUrl;
         /* Exit faster than enter: the user has already moved on. */
         transition:
             opacity 120ms var(--ease-quint),
-            transform 120ms var(--ease-quint);
+            scale 120ms var(--ease-quint);
     }
 
     .card-frame {
@@ -99,10 +100,10 @@ const src = img ?? data.imageUrl;
        progressive download rather than as intent. */
     .card-text {
         opacity: 0;
-        transform: translateY(4px);
+        translate: 0 4px;
         transition:
             opacity 120ms var(--ease-quint),
-            transform 120ms var(--ease-quint);
+            translate 120ms var(--ease-quint);
     }
 
     /* Second card onward in a sweep runs at about half the time. */
@@ -113,13 +114,13 @@ const src = img ?? data.imageUrl;
 
     .reveal-row:is(:hover, :has(:focus-visible)) .reveal-card {
         opacity: 1;
-        transform: scale(1);
+        scale: 1;
         transition-duration: var(--dur);
     }
 
     .reveal-row:is(:hover, :has(:focus-visible)) .card-text {
         opacity: 1;
-        transform: translateY(0);
+        translate: 0 0;
         transition-duration: var(--dur);
         transition-delay: var(--beat);
     }
@@ -135,7 +136,8 @@ const src = img ?? data.imageUrl;
             background: none;
             box-shadow: none;
             opacity: 1;
-            transform: none;
+            translate: none;
+            scale: none;
             pointer-events: auto;
         }
 
@@ -145,7 +147,7 @@ const src = img ?? data.imageUrl;
 
         .card-text {
             opacity: 1;
-            transform: none;
+            translate: none;
             color: var(--color-muted);
         }
     }
@@ -153,13 +155,13 @@ const src = img ?? data.imageUrl;
     @media (prefers-reduced-motion: reduce) {
         .reveal-card,
         .reveal-row:is(:hover, :has(:focus-visible)) .reveal-card {
-            transform: none;
+            scale: 1;
             transition: opacity 120ms linear;
         }
 
         .card-text,
         .reveal-row:is(:hover, :has(:focus-visible)) .card-text {
-            transform: none;
+            translate: none;
             transition: opacity 120ms linear;
             transition-delay: 0ms;
         }
@@ -172,34 +174,64 @@ const src = img ?? data.imageUrl;
     if (list) {
         const PAD = 16;
         const OFFSET = 18;
+        // Trails the pointer instead of tracking it exactly. Tying position
+        // 1:1 to the mouse reads nervous; easing lets it settle when you stop.
+        const EASE = window.matchMedia("(prefers-reduced-motion: reduce)")
+            .matches
+            ? 1
+            : 0.22;
+
+        let card: HTMLElement | null = null;
+        let w = 0;
+        let h = 0;
+        let tx = 0;
+        let ty = 0;
+        let cx = 0;
+        let cy = 0;
+        let raf = 0;
         let cool: ReturnType<typeof setTimeout>;
 
-        function place(row: HTMLElement, x: number, y: number) {
-            const card = row.querySelector<HTMLElement>(".reveal-card");
-            if (!card) return;
-
-            const w = card.offsetWidth;
-            const h = card.offsetHeight;
-
-            // Prefer down-right of the pointer, flip left when it would run
-            // off the edge, then clamp both axes into the viewport.
+        // Prefer down-right of the pointer, flip left when it would run off
+        // the edge, then clamp both axes into the viewport.
+        function target(x: number, y: number) {
             let left = x + OFFSET;
             if (left + w + PAD > innerWidth) left = x - OFFSET - w;
-            left = Math.max(PAD, Math.min(left, innerWidth - w - PAD));
+            tx = Math.max(PAD, Math.min(left, innerWidth - w - PAD));
+            ty = Math.max(PAD, Math.min(y + OFFSET, innerHeight - h - PAD));
+        }
 
-            const top = Math.max(
-                PAD,
-                Math.min(y + OFFSET, innerHeight - h - PAD),
-            );
+        function write() {
+            card!.style.setProperty("--card-x", `${Math.round(cx)}px`);
+            card!.style.setProperty("--card-y", `${Math.round(cy)}px`);
+        }
 
-            card.style.setProperty("--card-x", `${left}px`);
-            card.style.setProperty("--card-y", `${top}px`);
+        function step() {
+            if (!card) {
+                raf = 0;
+                return;
+            }
+            cx += (tx - cx) * EASE;
+            cy += (ty - cy) * EASE;
+            write();
+            raf = requestAnimationFrame(step);
         }
 
         function open(row: HTMLElement, x: number, y: number) {
+            card = row.querySelector<HTMLElement>(".reveal-card");
+            if (!card) return;
+
+            // Size is fixed, so measure once per open rather than per frame.
+            w = card.offsetWidth;
+            h = card.offsetHeight;
+            target(x, y);
+            // Snap on appearance; only subsequent movement eases.
+            cx = tx;
+            cy = ty;
+            write();
+
             clearTimeout(cool);
-            place(row, x, y);
             list!.setAttribute("data-warm", "");
+            if (!raf) raf = requestAnimationFrame(step);
         }
 
         for (const row of list.querySelectorAll<HTMLElement>(".reveal-row")) {
@@ -213,7 +245,12 @@ const src = img ?? data.imageUrl;
             });
         }
 
+        list.addEventListener("pointermove", (e) => {
+            if (card) target(e.clientX, e.clientY);
+        });
+
         list.addEventListener("pointerleave", () => {
+            card = null;
             cool = setTimeout(() => list.removeAttribute("data-warm"), 400);
         });
     }

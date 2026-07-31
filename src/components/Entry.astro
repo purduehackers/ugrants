@@ -48,39 +48,12 @@ import Sign from "@components/Sign.svelte";
         <div role="separator" class="rule-dither w-full"></div>
     </div>
 
-    <div class="enter flex flex-col gap-3" style="--i: 4">
-        <div class="flex flex-wrap items-center gap-x-3 gap-y-2">
-            <p class="text-[14px] leading-[1.35]">
-                we're actively reviewing applications for fall 2026.
-            </p>
-            <a
-                href="https://phack.rs/grants-form"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="inline-flex min-h-9 items-center gap-1.5 rounded-chip bg-ink/[0.055] px-3 text-[14px] leading-none font-semibold no-underline transition-[background-color,transform] duration-150 ease-quint hover:bg-ink/[0.09] active:scale-[0.97]"
-            >
-                apply
-                <svg
-                    aria-hidden="true"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    class="size-3.5 shrink-0 text-muted"
-                >
-                    <path
-                        d="M14 5.75 20.25 12 14 18.25"
-                        stroke="currentColor"
-                        stroke-width="1.75"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"></path>
-                    <path
-                        d="M19.5 12H3.75"
-                        stroke="currentColor"
-                        stroke-width="1.75"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"></path>
-                </svg>
-            </a>
-        </div>
+    <div class="enter flex flex-col gap-2" style="--i: 4">
+        <p class="text-[14px] leading-[1.35]">
+            we're actively reviewing grant applications for fall 2026! fill out <Link
+                href="https://phack.rs/grants-form">the intake form</Link
+            >!
+        </p>
 
         <p class="text-[14px] leading-[1.35] text-muted">
             want to help us fund <span class="font-mono">µgrants</span>? <Link

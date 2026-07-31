@@ -1,7 +1,7 @@
 ---
 // Equal-width buttons, so the chip slides on a plain translateX(100%).
 const label =
-    "flex flex-1 cursor-pointer items-center justify-center rounded-chip px-3 py-2 text-muted transition-colors duration-200 ease-quint aria-pressed:text-ink";
+    "flex flex-1 cursor-pointer items-center justify-center rounded-chip px-2 py-1.5 text-muted transition-colors duration-200 ease-quint aria-pressed:text-ink";
 ---
 
 <div
@@ -22,10 +22,10 @@ const label =
         aria-label="list view"
         class={label}
     >
-        <svg viewBox="0 0 16 16" class="size-3.5" aria-hidden="true">
-            <rect x="2" y="2" width="12" height="2" fill="currentColor" />
-            <rect x="2" y="7" width="12" height="2" fill="currentColor" />
-            <rect x="2" y="12" width="12" height="2" fill="currentColor" />
+        <svg viewBox="0 0 12 12" class="size-3" aria-hidden="true">
+            <rect x="1" y="1" width="10" height="2" fill="currentColor" />
+            <rect x="1" y="5" width="10" height="2" fill="currentColor" />
+            <rect x="1" y="9" width="10" height="2" fill="currentColor" />
         </svg>
     </button>
     <button
@@ -35,11 +35,11 @@ const label =
         aria-label="grid view"
         class={label}
     >
-        <svg viewBox="0 0 16 16" class="size-3.5" aria-hidden="true">
-            <rect x="2" y="2" width="5" height="5" fill="currentColor" />
-            <rect x="9" y="2" width="5" height="5" fill="currentColor" />
-            <rect x="2" y="9" width="5" height="5" fill="currentColor" />
-            <rect x="9" y="9" width="5" height="5" fill="currentColor" />
+        <svg viewBox="0 0 12 12" class="size-3" aria-hidden="true">
+            <rect x="1" y="1" width="4" height="4" fill="currentColor" />
+            <rect x="7" y="1" width="4" height="4" fill="currentColor" />
+            <rect x="1" y="7" width="4" height="4" fill="currentColor" />
+            <rect x="7" y="7" width="4" height="4" fill="currentColor" />
         </svg>
     </button>
 </div>

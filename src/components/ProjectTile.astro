@@ -21,10 +21,10 @@ const src = img ?? data.imageUrl;
 ---
 
 <figure
-    class="enter flex w-[312px] max-w-full flex-col gap-2"
+    class="tile enter flex w-[312px] max-w-full flex-col gap-2"
     style={`--i: ${Math.min(index, 10) + 6}`}
 >
-    <div class="w-[312px] max-w-full border border-hairline">
+    <div class="tile-frame relative w-[312px] max-w-full border border-hairline">
         {
             src ? (
                 <Image
@@ -39,6 +39,10 @@ const src = img ?? data.imageUrl;
                 <div class="dither-field aspect-square w-[312px] max-w-full" />
             )
         }
+
+        <p class="tile-desc text-[13px] leading-[1.4] text-ink">
+            {data.description}
+        </p>
     </div>
 
     <figcaption class="flex min-w-0 flex-col gap-0.5">
@@ -50,3 +54,46 @@ const src = img ?? data.imageUrl;
         </span>
     </figcaption>
 </figure>
+
+<style>
+    /* Covers the image rather than floating beside it: a popover per tile
+       would put eight overlapping surfaces on one grid. Crossfade only, no
+       movement, so it never reads as the image still loading. */
+    .tile-desc {
+        position: absolute;
+        inset: 0;
+        overflow: auto;
+        margin: 0;
+        padding: 14px;
+        background: var(--color-page);
+        opacity: 0;
+        filter: blur(3px);
+        pointer-events: none;
+        transition:
+            opacity 100ms var(--ease-quint),
+            filter 100ms var(--ease-quint);
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+        .tile:is(:hover, :has(:focus-visible)) .tile-desc {
+            opacity: 1;
+            filter: blur(0);
+            transition-duration: 160ms;
+        }
+    }
+
+    /* Nothing to hover, and the list view already shows descriptions inline
+       on touch. */
+    @media (hover: none) {
+        .tile-desc {
+            display: none;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .tile-desc {
+            filter: none;
+            transition: opacity 100ms linear;
+        }
+    }
+</style>

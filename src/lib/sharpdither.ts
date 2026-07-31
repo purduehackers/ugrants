@@ -104,6 +104,11 @@ function dither1Bit(gray: Uint8Array, width: number, height: number) {
 const sharpService: LocalImageService<SharpImageServiceConfig> = {
   parseURL: baseService.parseURL,
   getURL: baseService.getURL,
+  // Without these the <img> ships with nothing but src: no class, alt,
+  // width/height or loading, because Astro emits attributes through the
+  // service rather than from the component.
+  getHTMLAttributes: baseService.getHTMLAttributes,
+  getSrcSet: baseService.getSrcSet,
   // Everything comes out of transform() as a 1-bit PNG, so pin the format up
   // front or the generated filenames claim .webp/.jpg.
   validateOptions(options, config) {

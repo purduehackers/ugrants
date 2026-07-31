@@ -21,32 +21,204 @@ const src = img ?? data.imageUrl;
 ---
 
 <div
-    class="enter -mx-3 grid min-h-[50px] grid-cols-[minmax(0,1fr)_24px] items-center gap-x-3 border-b border-hairline px-3 py-2.5 transition-colors duration-150 ease-quint hover:bg-ink/[0.03]"
+    class="reveal-row enter -mx-3 grid min-h-[40px] items-center gap-x-4 border-b border-hairline px-3 py-2.5 transition-colors duration-150 ease-quint hover:bg-ink/[0.03] sm:grid-cols-[minmax(0,1fr)_auto]"
     style={`--i: ${Math.min(index, 10) + 6}`}
 >
-    <div class="flex min-w-0 flex-col gap-0.5">
-        <span class="truncate text-[14px] leading-[1.35]">
-            <OptionalLink href={data.urls.project}>{data.name}</OptionalLink>
-        </span>
-        <span class="truncate text-[13px] leading-[1.35] text-muted">
-            <Authors authors={data.authors} />
-        </span>
-    </div>
+    <span class="truncate text-[14px] leading-[1.35]">
+        <OptionalLink href={data.urls.project}>{data.name}</OptionalLink>
+    </span>
+    <span class="truncate text-[13px] leading-[1.35] text-muted sm:text-right">
+        <Authors authors={data.authors} />
+    </span>
 
-    <div class="size-6" aria-hidden="true">
-        {
-            src ? (
-                <Image
-                    class="dithered size-6"
-                    src={src}
-                    width={24}
-                    height={24}
-                    fit="cover"
-                    alt=""
-                />
-            ) : (
-                <div class="dither-field size-6" />
-            )
-        }
+    <div class="reveal-card">
+        <div class="card-frame border border-hairline">
+            {
+                src ? (
+                    <Image
+                        class="dithered w-[288px]"
+                        src={src}
+                        width={288}
+                        height={288}
+                        fit="cover"
+                        alt=""
+                        loading="eager"
+                        fetchpriority="low"
+                    />
+                ) : (
+                    <div class="dither-field aspect-square w-[288px]" />
+                )
+            }
+        </div>
+        <p class="card-text text-[13px] leading-[1.4] text-ink">
+            {data.description}
+        </p>
     </div>
 </div>
+
+<style>
+    .reveal-row {
+        position: relative;
+    }
+
+    .reveal-card {
+        position: absolute;
+        /* Set by script so the whole card stays inside the viewport. */
+        top: var(--card-top, -8px);
+        left: calc(100% + 20px);
+        z-index: 20;
+        display: flex;
+        width: 320px;
+        flex-direction: column;
+        gap: 10px;
+        padding: 16px;
+        background: var(--color-page);
+        border: 1px solid var(--color-hairline);
+        border-radius: var(--radius-chip);
+        box-shadow: 0 8px 28px rgb(10 10 10 / 0.1);
+        opacity: 0;
+        transform: scale(0.97) translateX(-4px);
+        transform-origin: left center;
+        pointer-events: none;
+
+        --dur: 200ms;
+        --beat: 55ms;
+
+        /* Exit is uniform and faster than enter: the user has already moved
+           on, so it should get out of the way. */
+        transition:
+            opacity 120ms var(--ease-quint),
+            transform 120ms var(--ease-quint);
+    }
+
+    /* The image gets no reveal of its own. Anything directional on a photo
+       reads as a progressive download rather than as intent. */
+    .card-text {
+        opacity: 0;
+        transform: translateY(4px);
+        transition:
+            opacity 120ms var(--ease-quint),
+            transform 120ms var(--ease-quint);
+    }
+
+    /* Second card onward in a sweep: same beats, roughly half the time, so it
+       still reads as motion without making a deliberate scan feel slow. */
+    :global([data-warm]) .reveal-card {
+        --dur: 110ms;
+        --beat: 25ms;
+    }
+
+    .reveal-row:is(:hover, :has(:focus-visible)) .reveal-card {
+        opacity: 1;
+        transform: scale(1) translateX(0);
+        transition-duration: var(--dur);
+    }
+
+    .reveal-row:is(:hover, :has(:focus-visible)) .card-text {
+        opacity: 1;
+        transform: translateY(0);
+        transition-duration: var(--dur);
+        transition-delay: var(--beat);
+    }
+
+    /* No gutter beside the column to park the card, so right-align it over
+       the column rather than letting it run off-screen. */
+    @media (max-width: 1320px) {
+        .reveal-card {
+            left: auto;
+            right: 0;
+            transform: scale(0.97) translateY(-4px);
+            transform-origin: top right;
+        }
+
+        .reveal-row:is(:hover, :has(:focus-visible)) .reveal-card {
+            transform: scale(1) translateY(0);
+        }
+    }
+
+    /* No hover to reveal anything, so the description is simply part of the
+       row. The image stays out: that is what grid view is for. */
+    @media (hover: none) {
+        .reveal-card {
+            position: static;
+            grid-column: 1 / -1;
+            width: auto;
+            padding: 6px 0 0;
+            border: 0;
+            border-radius: 0;
+            background: none;
+            box-shadow: none;
+            opacity: 1;
+            transform: none;
+            pointer-events: auto;
+        }
+
+        .card-frame {
+            display: none;
+        }
+
+        .card-text {
+            opacity: 1;
+            transform: none;
+            color: var(--color-muted);
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .reveal-card,
+        .reveal-row:is(:hover, :has(:focus-visible)) .reveal-card {
+            transform: none;
+            transition: opacity 120ms linear;
+        }
+
+        .card-text,
+        .reveal-row:is(:hover, :has(:focus-visible)) .card-text {
+            transform: none;
+            transition: opacity 120ms linear;
+            transition-delay: 0ms;
+        }
+    }
+</style>
+
+<script>
+    const list = document.querySelector<HTMLElement>("[data-view-list]");
+
+    if (list) {
+        const GAP = 16;
+        let active: HTMLElement | null = null;
+        let cool: ReturnType<typeof setTimeout>;
+
+        // Cards are taller than a row, so the last ones would hang off the
+        // bottom. Clamp instead of flipping: a flip would jump the card from
+        // below to above between two adjacent rows.
+        function place(row: HTMLElement) {
+            const card = row.querySelector<HTMLElement>(".reveal-card");
+            if (!card) return;
+            const rect = row.getBoundingClientRect();
+            const max = window.innerHeight - card.offsetHeight - GAP;
+            const top = Math.max(GAP, Math.min(rect.top - 8, max));
+            card.style.setProperty("--card-top", `${top - rect.top}px`);
+        }
+
+        function open(row: HTMLElement) {
+            active = row;
+            clearTimeout(cool);
+            place(row);
+            list!.setAttribute("data-warm", "");
+        }
+
+        for (const row of list.querySelectorAll<HTMLElement>(".reveal-row")) {
+            row.addEventListener("pointerenter", () => open(row));
+            row.addEventListener("focusin", () => open(row));
+        }
+
+        list.addEventListener("pointerleave", () => {
+            active = null;
+            cool = setTimeout(() => list.removeAttribute("data-warm"), 400);
+        });
+
+        const reflow = () => active && place(active);
+        addEventListener("scroll", reflow, { passive: true });
+        addEventListener("resize", reflow);
+    }
+</script>

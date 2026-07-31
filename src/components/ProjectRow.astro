@@ -61,10 +61,12 @@ const src = img ?? data.imageUrl;
         position: relative;
     }
 
+    /* Fixed and pinned to the pointer, placed once on enter so it does not
+       slide around while it is being read. */
     .reveal-card {
-        position: absolute;
-        top: var(--card-top, -8px);
-        left: calc(100% + 20px);
+        position: fixed;
+        top: var(--card-y, 0);
+        left: var(--card-x, 0);
         z-index: 20;
         display: flex;
         width: calc(var(--tile) + 32px);
@@ -76,8 +78,8 @@ const src = img ?? data.imageUrl;
         border-radius: var(--radius-chip);
         box-shadow: 0 8px 28px rgb(10 10 10 / 0.1);
         opacity: 0;
-        transform: scale(0.97) translateX(-4px);
-        transform-origin: left center;
+        transform: scale(0.97);
+        transform-origin: top left;
         pointer-events: none;
 
         --dur: 200ms;
@@ -111,7 +113,7 @@ const src = img ?? data.imageUrl;
 
     .reveal-row:is(:hover, :has(:focus-visible)) .reveal-card {
         opacity: 1;
-        transform: scale(1) translateX(0);
+        transform: scale(1);
         transition-duration: var(--dur);
     }
 
@@ -120,24 +122,6 @@ const src = img ?? data.imageUrl;
         transform: translateY(0);
         transition-duration: var(--dur);
         transition-delay: var(--beat);
-    }
-
-    /* Too little gutter to park it beside the column, so it goes under the row
-       and turns horizontal, which keeps the image but halves the height. */
-    :global([data-card="below"]) .reveal-card {
-        left: 0;
-        right: 0;
-        width: auto;
-        flex-direction: row;
-        align-items: flex-start;
-        transform: scale(0.99) translateY(-4px);
-        transform-origin: top center;
-    }
-
-    :global([data-card="below"])
-        .reveal-row:is(:hover, :has(:focus-visible))
-        .reveal-card {
-        transform: scale(1) translateY(0);
     }
 
     /* Nothing to hover, so the description is simply part of the row. */
@@ -186,65 +170,51 @@ const src = img ?? data.imageUrl;
     const list = document.querySelector<HTMLElement>("[data-view-list]");
 
     if (list) {
-        const GAP = 16;
-        const tile =
-            parseFloat(
-                getComputedStyle(document.documentElement).getPropertyValue(
-                    "--tile",
-                ),
-            ) || 232;
-        // Card plus its 20px offset and a margin, measured against real free
-        // space rather than a guessed breakpoint.
-        const NEEDED = tile + 32 + 20 + GAP;
-
-        let active: HTMLElement | null = null;
+        const PAD = 16;
+        const OFFSET = 18;
         let cool: ReturnType<typeof setTimeout>;
 
-        function place(row: HTMLElement) {
+        function place(row: HTMLElement, x: number, y: number) {
             const card = row.querySelector<HTMLElement>(".reveal-card");
             if (!card) return;
 
-            let rect = row.getBoundingClientRect();
-            const beside = window.innerWidth - rect.right >= NEEDED;
-            list!.dataset.card = beside ? "beside" : "below";
+            const w = card.offsetWidth;
+            const h = card.offsetHeight;
 
-            // Re-read: the mode above changes the card's own size.
-            rect = row.getBoundingClientRect();
-            const want = beside ? rect.top - 8 : rect.bottom + 6;
-            const max = window.innerHeight - card.offsetHeight - GAP;
-            const top = Math.max(GAP, Math.min(want, max));
-            card.style.setProperty("--card-top", `${top - rect.top}px`);
+            // Prefer down-right of the pointer, flip left when it would run
+            // off the edge, then clamp both axes into the viewport.
+            let left = x + OFFSET;
+            if (left + w + PAD > innerWidth) left = x - OFFSET - w;
+            left = Math.max(PAD, Math.min(left, innerWidth - w - PAD));
+
+            const top = Math.max(
+                PAD,
+                Math.min(y + OFFSET, innerHeight - h - PAD),
+            );
+
+            card.style.setProperty("--card-x", `${left}px`);
+            card.style.setProperty("--card-y", `${top}px`);
         }
 
-        function open(row: HTMLElement) {
-            active = row;
+        function open(row: HTMLElement, x: number, y: number) {
             clearTimeout(cool);
-            place(row);
+            place(row, x, y);
             list!.setAttribute("data-warm", "");
         }
 
         for (const row of list.querySelectorAll<HTMLElement>(".reveal-row")) {
-            row.addEventListener("pointerenter", () => open(row));
-            row.addEventListener("focusin", () => open(row));
-        }
-
-        list.addEventListener("pointerleave", () => {
-            active = null;
-            cool = setTimeout(() => list.removeAttribute("data-warm"), 400);
-        });
-
-        // place() reads layout, so coalesce to one call per paint.
-        let queued = false;
-        function reflow() {
-            if (!active || queued) return;
-            queued = true;
-            requestAnimationFrame(() => {
-                queued = false;
-                if (active) place(active);
+            row.addEventListener("pointerenter", (e) =>
+                open(row, e.clientX, e.clientY),
+            );
+            // Keyboard focus has no pointer, so anchor to the row itself.
+            row.addEventListener("focusin", () => {
+                const r = row.getBoundingClientRect();
+                open(row, r.left + 24, r.bottom);
             });
         }
 
-        addEventListener("scroll", reflow, { passive: true });
-        addEventListener("resize", reflow, { passive: true });
+        list.addEventListener("pointerleave", () => {
+            cool = setTimeout(() => list.removeAttribute("data-warm"), 400);
+        });
     }
 </script>

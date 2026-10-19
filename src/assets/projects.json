@@ -1,5 +1,19 @@
 [
   {
+    "id": "echo",
+    "name": "Echo, A Star Wars Droid",
+    "authors": [{ "name": "Hayden Williams" }],
+    "urls": {},
+    "description": "A life-size bipedal duck robot inspired by Disney's BDX droids, designed to walk autonomously using reinforcement learning and communicate using local language models."
+  },
+  {
+    "id": "autonomous-rc-car",
+    "name": "Autonomous RC Car",
+    "authors": [{ "name": "Finn Pavlik" }],
+    "urls": {},
+    "description": "An autonomous RC car that uses LiDAR and GPS to map its surroundings, navigate to destinations, and avoid new obstacles, with a Jetson computer for onboard processing."
+  },
+  {
     "id": "notebooks",
     "image": "notebooks.png",
     "name": "Mini Notebooks",
@@ -38,9 +52,7 @@
     "id": "2048",
     "image": "2048.webp",
     "name": "2048 AI",
-    "authors": [
-      { "name": "Angela Qian", "url": "https://angelazqian.github.io/" }
-    ],
+    "authors": [{ "name": "Angela Qian", "url": "https://angelazqian.github.io/" }],
     "urls": {},
     "description": "A neural network trained off human games to play 2048. It was displayed as a retro-style interactive exhibit using a CRT monitor and an old school joystick, where visitors could actively \"sabotage\" the game and watch the bot attempt to recover."
   },

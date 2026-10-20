@@ -1,0 +1,93 @@
+---
+import Layout from "@layouts/Layout.astro";
+import { Image } from "astro:assets";
+import Authors from "@components/Authors.astro";
+import { loadProjects, type LoadedProject } from "@lib/projects";
+import { projectLinks } from "../../data/project-links";
+
+export async function getStaticPaths() {
+  return (await loadProjects()).map((entry) => ({
+    params: { id: entry.project.id },
+    props: entry,
+  }));
+}
+
+type Props = LoadedProject;
+const {
+  project: { data, id },
+  img,
+} = Astro.props;
+const src = img ?? data.imageUrl;
+const links = projectLinks[id] ?? [];
+---
+
+<Layout
+  title={`${data.name} — Purdue Hackers µgrants`}
+  description={data.description}
+>
+  <main class="measure mx-auto pt-16 pb-24">
+    <a href="/" class="underline">← all µgrants projects</a>
+    <article class="flex flex-col gap-5 mt-8">
+      <header>
+        <p class="font-mono text-muted mb-3">
+          funded by purdue hackers µgrants
+        </p>
+        <h1 class="text-3xl leading-tight mb-3">{data.name}</h1>
+        <p><Authors authors={data.authors} /></p>
+      </header>
+      {
+        src && (
+          <Image
+            src={src}
+            width={480}
+            height={360}
+            fit="contain"
+            alt={data.name}
+            class="max-w-full h-auto"
+          />
+        )
+      }
+      <p class="text-base leading-relaxed">{data.description}</p>
+      {
+        data.urls.project && (
+          <a class="underline" href={data.urls.project}>
+            visit the project ↗
+          </a>
+        )
+      }
+      {
+        links.length > 0 && (
+          <section class="border-t border-hairline pt-5">
+            <h2 class="font-medium mb-3">follow the work</h2>
+            <ul class="flex flex-col gap-3">
+              {links.map((link) => (
+                <li>
+                  <a class="underline" href={link.href}>
+                    {link.label} ↗
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )
+      }
+      <section class="border-t border-hairline pt-5">
+        <h2 class="font-medium mb-3">backing ambitious ideas at purdue</h2>
+        <p>
+          This project is part of <a class="underline" href="/">µgrants</a>,
+          Purdue Hackers’ funding program for student projects and artworks. We
+          back highly talented, curious people working across software,
+          hardware, and design.
+        </p>
+        <p class="mt-3">
+          <a class="underline" href="/"
+            >Explore the program and current applications</a
+          >, or meet collaborators at
+          <a class="underline" href="https://www.purduehackers.com/hack-night"
+            >Hack Night</a
+          >.
+        </p>
+      </section>
+    </article>
+  </main>
+</Layout>

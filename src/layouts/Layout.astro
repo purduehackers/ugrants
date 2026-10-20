@@ -1,8 +1,12 @@
 ---
 import "../styles/global.css";
 
-const description =
-  "grants by purdue hackers to fund your ambitious projects or artworks.";
+interface Props { title?: string; description?: string; }
+const {
+  title = 'µgrants — student project funding by Purdue Hackers',
+  description = 'Up to $1,000 for ambitious student projects and artworks at Purdue. Explore funded software, hardware, and design projects and the people building them.',
+} = Astro.props;
+const canonical = new URL(Astro.url.pathname, 'https://grants.purduehackers.com');
 ---
 
 <html lang="en" data-view="list" data-chip-view="list">
@@ -12,9 +16,11 @@ const description =
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="generator" content={Astro.generator} />
         <meta name="darkreader-lock" />
-        <title>µgrants</title>
+        <title>{title}</title>
         <meta name="description" content={description} />
-        <meta property="og:title" content="µgrants" />
+        <link rel="canonical" href={canonical} />
+        <meta property="og:url" content={canonical} />
+        <meta property="og:title" content={title} />
         <meta property="og:description" content={description} />
         <meta property="og:type" content="website" />
 

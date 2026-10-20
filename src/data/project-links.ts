@@ -8,7 +8,7 @@ export const projectLinks: Record<string, { label: string; href: string }[]> = {
   ],
   beacons: [
     {
-      label: "Jack’s development story",
+      label: "Creator’s write-up",
       href: "https://www.jackhogan.me/blog/from-tiny-seed-to-towering-sequoia",
     },
     {
@@ -44,7 +44,7 @@ export const projectLinks: Record<string, { label: string; href: string }[]> = {
       href: "https://burst.purduehackers.com/#the-sign",
     },
     {
-      label: "Jack’s story",
+      label: "Creator’s write-up",
       href: "https://www.jackhogan.me/blog/from-tiny-seed-to-towering-sequoia",
     },
   ],
